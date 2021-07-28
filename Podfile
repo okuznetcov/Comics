@@ -9,5 +9,6 @@ target 'Comics' do
 
   # Pods for Comics
   pod 'SnapKit', '~> 5.0.0'
+  pod 'RealmSwift', '=10.1.4'
 
 end
