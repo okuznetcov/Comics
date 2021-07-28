@@ -15,15 +15,17 @@ struct Comic: Codable {
 
 import RealmSwift
 
-class Comic: Object {
+class Comic: Object, Decodable {
     
     @objc dynamic var title = ""
     @objc dynamic var pageCount: String?
+    @objc dynamic var imageData: Data?
     
     // назначенный инициализатор
-    convenience init(title: String, pageCount: String?) {
+    convenience init(title: String, pageCount: String?, imageData: Data?) {
         self.init() // инициализируем свойства по умолчанию
         self.title = title
         self.pageCount = pageCount
+        self.imageData = imageData
     }
 }

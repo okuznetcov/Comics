@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1E6CC6BD0C4D18826ACE616A /* Pods_Comics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2AC5FA4C7B35E4F6E1016C63 /* Pods_Comics.framework */; };
+		3379F96B26B1787D00EBFAC6 /* comicCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3379F96A26B1787D00EBFAC6 /* comicCell.swift */; };
 		3386C16D26B009AF00FADF81 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3386C16C26B009AF00FADF81 /* AppDelegate.swift */; };
 		3386C16F26B009AF00FADF81 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3386C16E26B009AF00FADF81 /* SceneDelegate.swift */; };
 		3386C17126B009AF00FADF81 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3386C17026B009AF00FADF81 /* ViewController.swift */; };
@@ -15,7 +16,6 @@
 		3386C17926B009B000FADF81 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3386C17726B009B000FADF81 /* LaunchScreen.storyboard */; };
 		3386C18A26B022CA00FADF81 /* Comic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3386C18926B022CA00FADF81 /* Comic.swift */; };
 		3386C18D26B031CD00FADF81 /* Networking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3386C18C26B031CD00FADF81 /* Networking.swift */; };
-		33955FD226B1530000A97362 /* ComicsPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33955FD126B1530000A97362 /* ComicsPresenter.swift */; };
 		33955FD426B1563B00A97362 /* SelectedComicViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33955FD326B1563B00A97362 /* SelectedComicViewController.swift */; };
 		33955FD626B1602100A97362 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33955FD526B1602100A97362 /* StorageManager.swift */; };
 /* End PBXBuildFile section */
@@ -23,6 +23,7 @@
 /* Begin PBXFileReference section */
 		2AC5FA4C7B35E4F6E1016C63 /* Pods_Comics.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Comics.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2F602891FD80D44F5C20DB35 /* Pods-Comics.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Comics.debug.xcconfig"; path = "Target Support Files/Pods-Comics/Pods-Comics.debug.xcconfig"; sourceTree = "<group>"; };
+		3379F96A26B1787D00EBFAC6 /* comicCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = comicCell.swift; sourceTree = "<group>"; };
 		3386C16926B009AF00FADF81 /* Comics.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Comics.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3386C16C26B009AF00FADF81 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3386C16E26B009AF00FADF81 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -32,7 +33,6 @@
 		3386C17A26B009B000FADF81 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3386C18926B022CA00FADF81 /* Comic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comic.swift; sourceTree = "<group>"; };
 		3386C18C26B031CD00FADF81 /* Networking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Networking.swift; sourceTree = "<group>"; };
-		33955FD126B1530000A97362 /* ComicsPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComicsPresenter.swift; sourceTree = "<group>"; };
 		33955FD326B1563B00A97362 /* SelectedComicViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedComicViewController.swift; sourceTree = "<group>"; };
 		33955FD526B1602100A97362 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		6FEDDF6CDACFF76A645C354B /* Pods-Comics.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Comics.release.xcconfig"; path = "Target Support Files/Pods-Comics/Pods-Comics.release.xcconfig"; sourceTree = "<group>"; };
@@ -50,6 +50,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3379F96926B177EB00EBFAC6 /* Etc */ = {
+			isa = PBXGroup;
+			children = (
+				33955FD526B1602100A97362 /* StorageManager.swift */,
+				3386C18C26B031CD00FADF81 /* Networking.swift */,
+			);
+			path = Etc;
+			sourceTree = "<group>";
+		};
 		3386C16026B009AF00FADF81 = {
 			isa = PBXGroup;
 			children = (
@@ -72,10 +81,10 @@
 			isa = PBXGroup;
 			children = (
 				3386C18726B022A600FADF81 /* App */,
+				3379F96926B177EB00EBFAC6 /* Etc */,
 				3386C18826B022BC00FADF81 /* View */,
 				3386C18B26B022D200FADF81 /* Model */,
 				3386C17A26B009B000FADF81 /* Info.plist */,
-				33955FD126B1530000A97362 /* ComicsPresenter.swift */,
 			);
 			path = Comics;
 			sourceTree = "<group>";
@@ -95,6 +104,7 @@
 			isa = PBXGroup;
 			children = (
 				3386C17026B009AF00FADF81 /* ViewController.swift */,
+				3379F96A26B1787D00EBFAC6 /* comicCell.swift */,
 				33955FD326B1563B00A97362 /* SelectedComicViewController.swift */,
 			);
 			path = View;
@@ -104,8 +114,6 @@
 			isa = PBXGroup;
 			children = (
 				3386C18926B022CA00FADF81 /* Comic.swift */,
-				33955FD526B1602100A97362 /* StorageManager.swift */,
-				3386C18C26B031CD00FADF81 /* Networking.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -245,8 +253,8 @@
 				3386C18A26B022CA00FADF81 /* Comic.swift in Sources */,
 				3386C16D26B009AF00FADF81 /* AppDelegate.swift in Sources */,
 				33955FD426B1563B00A97362 /* SelectedComicViewController.swift in Sources */,
-				33955FD226B1530000A97362 /* ComicsPresenter.swift in Sources */,
 				3386C16F26B009AF00FADF81 /* SceneDelegate.swift in Sources */,
+				3379F96B26B1787D00EBFAC6 /* comicCell.swift in Sources */,
 				33955FD626B1602100A97362 /* StorageManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
