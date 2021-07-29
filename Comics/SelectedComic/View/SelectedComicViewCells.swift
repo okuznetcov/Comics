@@ -65,6 +65,7 @@ class textCell: UITableViewCell {
         title.translatesAutoresizingMaskIntoConstraints = false
         title.leftAnchor.constraint(equalTo: leftAnchor, constant: 12).isActive = true
         title.topAnchor.constraint(equalTo: cellDescription.bottomAnchor, constant: 3).isActive = true
+        title.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -20).isActive = true
         title.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12).isActive = true
     }
 }

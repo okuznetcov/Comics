@@ -48,6 +48,12 @@ class ComicsListPresenter: ComicsListPresenterProtocol {
                             view.reloadTable()
                         }
                     }
+                    
+                    for comic in self.comics {
+                        if (comic.imageData == nil) {
+                            
+                        }
+                    }
                 case .failure(_):
                     print("error")
                 }

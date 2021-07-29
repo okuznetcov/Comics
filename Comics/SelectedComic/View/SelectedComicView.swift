@@ -78,7 +78,9 @@ extension SelectedComicView: UITableViewDataSource {
        
         let comic = presenter.getComic()
         let cell: UITableViewCell!
-        tableView.rowHeight = 68
+        //tableView.rowHeight = 68
+        tableView.rowHeight = UITableView.automaticDimension;
+        tableView.estimatedRowHeight = 68.0;
         
         // в зависимости от id строки таблицы, показываем нужные данные в порядке
         switch indexPath.row {
@@ -94,13 +96,13 @@ extension SelectedComicView: UITableViewDataSource {
             cell = currentCell
         case 2:
             let currentCell = tableView.dequeueReusableCell(withIdentifier: "textCell", for: indexPath) as! textCell
-            currentCell.title.text = comic.title
+            currentCell.title.text = comic.pageCount
             currentCell.cellDescription.text = "Количество страниц"
             cell = currentCell
         case 3:
             let currentCell = tableView.dequeueReusableCell(withIdentifier: "textCell", for: indexPath) as! textCell
-            currentCell.title.text = comic.title
-            currentCell.cellDescription.text = "Год"
+            currentCell.title.text = comic.descr
+            currentCell.cellDescription.text = "Описание"
             cell = currentCell
         default:
             cell = tableView.dequeueReusableCell(withIdentifier: "textCell", for: indexPath) as! textCell

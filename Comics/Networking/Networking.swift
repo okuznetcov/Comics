@@ -72,7 +72,7 @@ class Networking {
     }
     
     
-    /*func fetchImage(url: String, imageExtension: String) {
+    func fetchImage(url: String, imageExtension: String) {
         let imageUrl = getImageUrl(url: url, imageExtension: imageExtension)
         print(imageUrl)
         DispatchQueue.global().async {
@@ -82,5 +82,5 @@ class Networking {
                     }
                 }
             }
-    }*/
+    }
 }
