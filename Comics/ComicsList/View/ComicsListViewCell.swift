@@ -1,8 +1,8 @@
 import UIKit
 
-class comicCell: UITableViewCell {
+class ComicsListViewCell: UITableViewCell {
     
-    static let identifier = "comicCell"
+    static let identifier = "ComicsListViewCell"
     
     var image = UIImageView()       // пока что я ячейке будет название и обложка
     var title = UILabel()
