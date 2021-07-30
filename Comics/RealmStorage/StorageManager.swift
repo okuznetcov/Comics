@@ -14,4 +14,16 @@ class StoargeManager {
             realm.delete(comic)
         }
     }
+    
+    static func editObjectImage(_ comic: Comic, imageData: Data) {
+        try! realm.write {
+            comic.imageData = imageData
+        }
+    }
+    
+    static func editObject(parameter: () -> Void) {
+        try! realm.write {
+            parameter()
+        }
+    }
 }

@@ -21,14 +21,15 @@ class ComicsListPresenter: ComicsListPresenterProtocol {
     private var filteredComics: Results<Comic>!         // все записи о комиксах
     unowned let view: ComicsListViewProtocol
     var fetchedComics: [DownloadedComic] = []
+    private let API = Networking.shared
     
     required init(view: ComicsListViewProtocol) {
+        
         //StoargeManager.saveObject(Comic(marvelId: "3421", title: "Test", description: "suprehero", pageCount: "20"))
         self.view = view
         comics = realm.objects(Comic.self)
         
-        let networking = Networking(url: "/comics", limit: 5)
-        networking.fetchComics(url: "/comics", params: "limit=100", completion: { [weak self] result in
+        API.fetchComics(url: "/comics", params: "limit=100", completion: { [weak self] result in
             guard let self = self else { return }
             DispatchQueue.main.async {
             switch result {
@@ -36,7 +37,6 @@ class ComicsListPresenter: ComicsListPresenterProtocol {
                     self.fetchedComics.append(contentsOf: (apiData?.data.results)!)
                     
                     for comic in self.fetchedComics {
-                        //networking.fetchImage(url: comic.thumbnail.path, imageExtension: comic.thumbnail.extension)
                         if (self.comics.filter("marvelId == %@", "\(comic.id)").count == 0) {
                             print(comic.id)
                             StoargeManager.saveObject(
@@ -50,10 +50,22 @@ class ComicsListPresenter: ComicsListPresenterProtocol {
                     }
                     
                     for comic in self.comics {
-                        if (comic.imageData == nil) {
+                        if (comic.imageData != nil) { continue }
+                        let fetchedComicWithImageURL = self.fetchedComics.first(where: {"\($0.id)" == comic.marvelId})
+                        guard let fetchedComicWithImageURL = fetchedComicWithImageURL else { continue }
+                        let imagePath = fetchedComicWithImageURL.thumbnail.path
+                        let imageEx = fetchedComicWithImageURL.thumbnail.extension
                             
+                        DispatchQueue.global().async {
+                            let imageData = self.API.fetchImage(url: imagePath, imageExtension: imageEx)
+                            guard let imageData = imageData else { return }
+                            DispatchQueue.main.async {
+                                StoargeManager.editObjectImage(comic, imageData: imageData)
+                                view.reloadTable()
+                            }
                         }
                     }
+                    
                 case .failure(_):
                     print("error")
                 }
@@ -95,42 +107,3 @@ class ComicsListPresenter: ComicsListPresenterProtocol {
         
     }
 }
-
-
-/*
- 
- 
- 
- var objects = [Comic]()
- 
- func getObjects() {
-     let networking = Networking(url: "/comics")
-     //networking.makeRequest()
-     
-         networking.fetchComics { [weak self] result in
-             guard let self = self else { return }
-             DispatchQueue.main.async {
-                 switch result {
-                 case .success(let apiData):
-                   print("sndfkgjndk")
-                     self.fetchedComics.append(contentsOf: (apiData?.data.results)!)
-                 case .failure(_):
-                     print("error")
-                 }
-             }
-         }
-     
-     /*networking.makeRequest { [weak self] result in
-         guard let self = self else { return }
-         DispatchQueue.main.async {
-             switch result {
-             case .success(let data):
-                 self.objects = data!
-                 print(self.objects.count)
-             case .failure(let error):
-                 print("error")
-             }
-         }
-     }*/
- }
- */

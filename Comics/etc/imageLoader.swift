@@ -10,4 +10,10 @@ class imageLoader {
     }
 }
 
+extension UIImageView {
+    func makeRounded() {
+        print("ffff")
+    }
+}
+
 

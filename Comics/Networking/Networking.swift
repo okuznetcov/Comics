@@ -6,19 +6,9 @@ let PRIVATE_KEY = "6da1e100b192ee4ac295b0dc7675b6b69425d4d3";
 let ENTRY_POINT = "https://gateway.marvel.com/v1/public"
 
 class Networking {
-
-   // let urlInput: String?               // основа url-запроса, например /comics
-   // var limit: Int?
-   // var imageExtension: String?
     
-    init(imageUrl: String, imageExtension: String) {
-    //    self.urlInput = imageUrl
-    //    self.imageExtension = imageExtension
-    }
-    
-    init(url: String, limit: Int) {
-    //    self.urlInput = url
-    //    self.limit = limit
+    static var shared: Networking {
+        return Networking()
     }
     
     fileprivate func timestamp() -> Double {        // получаем timestamp который хочет Marvel API для авторизации
@@ -43,6 +33,7 @@ class Networking {
         }
         return address
     }
+    
     
     func fetchComics(url: String, params: String, completion: @escaping (Result<APIComicResult?, Error>) -> Void) {
         
@@ -71,16 +62,15 @@ class Networking {
         .resume()
     }
     
-    
-    func fetchImage(url: String, imageExtension: String) {
+    func fetchImage(url: String, imageExtension: String) -> Data? {
         let imageUrl = getImageUrl(url: url, imageExtension: imageExtension)
         print(imageUrl)
-        DispatchQueue.global().async {
-                if let data = try? Data(contentsOf: URL(string: imageUrl)!) {
-                    DispatchQueue.main.async {
-                       // UIImage(data: data)?.pngData()
-                    }
-                }
-            }
+        if imageUrl.contains("image_not_available") {
+            return nil
+        }
+        if let data = try? Data(contentsOf: URL(string: imageUrl)!) {
+            return UIImage(data: data)?.pngData()
+        }
+        return nil
     }
 }
