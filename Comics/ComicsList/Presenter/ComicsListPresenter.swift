@@ -9,7 +9,7 @@ import Foundation
 import RealmSwift
 
 protocol ComicsListPresenterProtocol: AnyObject {
-    func selectedComicVC(at selectedRow: Int) -> SelectedComicView      // получить вью контроллер выбранного комикса
+    func selectedComicVC(at selectedRow: Int)                           // получить вью контроллер выбранного комикса
     func searchBarTextChanged(searchText: String)                       // обработчик изменения значения поля поиска
     func getComic(at index: Int) -> Comic                               // получение конкретного комикса
     func getNumberOfComics() -> Int                                     // получение количества комиксов
@@ -19,14 +19,16 @@ class ComicsListPresenter: ComicsListPresenterProtocol {
     
     private var comics: Results<Comic>!                 // все записи о комиксах
     private var filteredComics: Results<Comic>!         // все записи о комиксах
+    private var router: ComicsListRouterProtocol!
     unowned let view: ComicsListViewProtocol
     var fetchedComics: [DownloadedComic] = []
     
     private let API = Networking.shared
     
-    required init(view: ComicsListViewProtocol) {
+    required init(view: ComicsListViewProtocol, router: ComicsListRouterProtocol) {
         //StoargeManager.saveObject(Comic(marvelId: "3421", title: "Test", description: "suprehero", pageCount: "20"))
         self.view = view
+        self.router = router
         comics = realm.objects(Comic.self)
         loadComics()                                    // обращение к Marvel API
     }
@@ -113,10 +115,7 @@ class ComicsListPresenter: ComicsListPresenterProtocol {
         view.reloadTable()
     }
     
-    func selectedComicVC(at selectedRow: Int) -> SelectedComicView {
-        let dvc = SelectedComicView(comic: comics[selectedRow])
-        //dvc.presenter?.setComic(comic: comics[selectedRow])   // передаем информацию о выбранном комиксе другому презентеру
-        return dvc
-        
+    func selectedComicVC(at selectedRow: Int) {
+        router.navigateToPushedViewController(comic: comics[selectedRow])
     }
 }

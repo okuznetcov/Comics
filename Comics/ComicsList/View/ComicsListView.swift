@@ -20,7 +20,6 @@ class ComicsListView: UIViewController {
     private let comicsTableView = UITableView()
     
     override func viewDidLoad() {
-        presenter = ComicsListPresenter(view: self)
         super.viewDidLoad()
         navigationItem.title = "Комиксы"
         setupSearchBar()
@@ -77,8 +76,9 @@ extension ComicsListView: UITableViewDataSource {
 
 extension ComicsListView: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let dvc = presenter.selectedComicVC(at: indexPath.row)
-        self.navigationController?.pushViewController(dvc, animated: true)
+        presenter.selectedComicVC(at: indexPath.row)
+        //let dvc = presenter.selectedComicVC(at: indexPath.row)
+        //self.navigationController?.pushViewController(dvc, animated: true)
         comicsTableView.deselectRow(at: indexPath, animated: true)  // снимаем выделение с выделенной ячейки таблицы (чтобы была "отжата")
     }
 }
