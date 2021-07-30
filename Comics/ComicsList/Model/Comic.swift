@@ -17,14 +17,14 @@ import RealmSwift
 
 class Comic: Object, Decodable {
     
-    @objc dynamic var marvelId = ""
-    @objc dynamic var title = ""
-    @objc dynamic var pageCount: String?
-    @objc dynamic var descr: String = "Недоступно"
-    @objc dynamic var imageData: Data?
-    @objc dynamic var date = Date()
+    @objc dynamic var marvelId = ""                     // id комикса в Marvel API
+    @objc dynamic var title = ""                        // название
+    @objc dynamic var pageCount: String?                // число страницы
+    @objc dynamic var descr: String = "Недоступно"      // описание
+    @objc dynamic var imageData: Data?                  // изображение
+    @objc dynamic var date = Date()                     // дата создания
+                                                        // TODO: по плану мониторить дату последнего просмотра комикса и удалять старые
     
-    // назначенный инициализатор
     convenience init(marvelId: String, title: String, description: String, pageCount: String?, imageData: Data?) {
         self.init() // инициализируем свойства по умолчанию
         self.marvelId = marvelId
@@ -34,7 +34,6 @@ class Comic: Object, Decodable {
         self.imageData = imageData
     }
     
-    // назначенный инициализатор
     convenience init(marvelId: String, title: String, description: String?, pageCount: String?) {
         self.init() // инициализируем свойства по умолчанию
         self.marvelId = marvelId

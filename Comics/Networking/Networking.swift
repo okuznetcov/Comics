@@ -26,7 +26,7 @@ class Networking {
         return "\(ENTRY_POINT)\(url)?ts=\(currentTimestamp)&\(params)&apikey=\(PUBLIC_KEY)&hash=\(getHash(timestamp: currentTimestamp))"
     }
     
-    fileprivate func getImageUrl(url: String, imageExtension: String) -> String {        // добавляем ключи к url
+    fileprivate func getImageUrl(url: String, imageExtension: String) -> String {        // генерируем URL для изображения
         var address = "\(url)/portrait_incredible.\(imageExtension)"
         if (address.hasPrefix("http")) {
             address = "https" + address.dropFirst(4)
@@ -61,6 +61,7 @@ class Networking {
         }
         .resume()
     }
+    
     
     func fetchImage(url: String, imageExtension: String) -> Data? {
         let imageUrl = getImageUrl(url: url, imageExtension: imageExtension)

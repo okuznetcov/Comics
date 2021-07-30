@@ -1,5 +1,7 @@
 import Foundation
 
+// структуры для парсинга JSON-ответа Marvel API
+
 struct APIComicResult: Codable {
     var data: APIComicData
 }

@@ -11,17 +11,13 @@ protocol SelectedComicViewProtocol: AnyObject {
     
 }
 
-extension SelectedComicView: SelectedComicViewProtocol {
-    
-}
-
-class SelectedComicView : UIViewController {
+class SelectedComicView: UIViewController, SelectedComicViewProtocol{
     
     var presenter: SelectedComicPresenterProtocol!
     var image = UIImageView()
     let tableView = UITableView()
     
-    init (comic: Comic) {
+    init(comic: Comic) {                            // инициализатор служит для передачи комикса в презентер
         super.init(nibName: nil, bundle: nil)
         presenter = SelectedComicPresenter(view: self, comic: comic)
     }
@@ -71,14 +67,13 @@ class SelectedComicView : UIViewController {
 
 extension SelectedComicView: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return presenter.getNumOfRows()        // количество свойств комикса, пока тестово 4
+        return presenter.getNumOfRows()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
        
         let comic = presenter.getComic()
         let cell: UITableViewCell!
-        //tableView.rowHeight = 68
         tableView.rowHeight = UITableView.automaticDimension;
         tableView.estimatedRowHeight = 68.0;
         

@@ -7,7 +7,7 @@ class ComicsListViewCell: UITableViewCell {
     var image = UIImageView()       // пока что я ячейке будет название и обложка
     var title = UILabel()
     
-    // инициализируем ячейка
+    // инициализируем ячейку
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         addSubview(image)

@@ -8,9 +8,9 @@
 import UIKit
 
 protocol ComicsListViewProtocol: AnyObject {
-    func reloadTable()
-    func checkSearchBarIsEmpty() -> Bool
-    func checkSearchIsActive() -> Bool
+    func reloadTable()                          // обновить таблицу
+    func checkSearchBarIsEmpty() -> Bool        // строка поиска пуста?
+    func checkSearchIsActive() -> Bool          // строка поиска активна?
 }
 
 class ComicsListView: UIViewController {
@@ -22,11 +22,9 @@ class ComicsListView: UIViewController {
     override func viewDidLoad() {
         presenter = ComicsListPresenter(view: self)
         super.viewDidLoad()
-       
         navigationItem.title = "Комиксы"
         setupSearchBar()
         setupTableView()
-      //  getObjects()
     }
     
     // настройка и установка констрейнов для таблицы
@@ -59,7 +57,6 @@ class ComicsListView: UIViewController {
 }
 
 // два расширения UITableViewDataSource и UITableViewDelegate которые хочет TableView
-
 extension ComicsListView: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return presenter.getNumberOfComics()
@@ -95,14 +92,17 @@ extension ComicsListView: UISearchResultsUpdating {
 
 extension ComicsListView: ComicsListViewProtocol {
     
+    // строка поиска пуста?
     func checkSearchBarIsEmpty() -> Bool {
         return searchBarIsEmpty
     }
     
+    // строка поиска активна?
     func checkSearchIsActive() -> Bool {
         return searchController.isActive
     }
     
+    // обновить таблицу
     func reloadTable() {
         comicsTableView.reloadData()
     }

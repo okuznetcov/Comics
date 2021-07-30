@@ -2,18 +2,11 @@ import UIKit
 
 class imageLoader {
     static func getImage(comic: Comic) -> UIImage {
-        if let imageData = comic.imageData {
+        if let imageData = comic.imageData {            // если у комикса есть изображение, возвращаем его
             return UIImage(data: imageData)!
-        } else {
+        } else {                                        // иначе возвращаем стандартное
             return UIImage(named: "defaultComicImage")!
         }
     }
 }
-
-extension UIImageView {
-    func makeRounded() {
-        print("ffff")
-    }
-}
-
 
