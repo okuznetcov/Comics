@@ -17,15 +17,6 @@ class SelectedComicView: UIViewController, SelectedComicViewProtocol{
     var image = UIImageView()
     let tableView = UITableView()
     
-    /*init(comic: Comic) {                            // инициализатор служит для передачи комикса в презентер
-        super.init(nibName: nil, bundle: nil)
-        presenter = SelectedComicPresenter(view: self, comic: comic)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }*/
-    
     override func viewDidLoad() {
         navigationItem.title = "Комикс"
         setupTableView()

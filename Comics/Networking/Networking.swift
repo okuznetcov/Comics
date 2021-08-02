@@ -65,11 +65,12 @@ class Networking {
     
     func fetchImage(url: String, imageExtension: String) -> Data? {
         let imageUrl = getImageUrl(url: url, imageExtension: imageExtension)
-        print(imageUrl)
         if imageUrl.contains("image_not_available") {
+            print("image_not_available")
             return nil
         }
         if let data = try? Data(contentsOf: URL(string: imageUrl)!) {
+            print(imageUrl)
             return UIImage(data: data)?.pngData()
         }
         return nil

@@ -11,19 +11,29 @@ protocol ComicsListViewProtocol: AnyObject {
     func reloadTable()                          // обновить таблицу
     func checkSearchBarIsEmpty() -> Bool        // строка поиска пуста?
     func checkSearchIsActive() -> Bool          // строка поиска активна?
+    func setActivityIndicatorState(state: Bool) // установка состояния индикатора активности работы с сетью
 }
 
 class ComicsListView: UIViewController {
     
     var presenter: ComicsListPresenterProtocol!
     private let searchController = UISearchController(searchResultsController: nil)
+    private let activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
     private let comicsTableView = UITableView()
     
     override func viewDidLoad() {
-        super.viewDidLoad()
+       // super.viewDidLoad()
         navigationItem.title = "Комиксы"
         setupSearchBar()
         setupTableView()
+        setupActivityIndicator()
+    }
+    
+    // установка и настройка индикатора работы с сетью
+    fileprivate func setupActivityIndicator() {
+        let barButton = UIBarButtonItem(customView: activityIndicator)
+        self.navigationItem.setRightBarButton(barButton, animated: true)
+        //activityIndicator.stopAnimating()
     }
     
     // настройка и установка констрейнов для таблицы
@@ -81,6 +91,11 @@ extension ComicsListView: UITableViewDelegate {
         //self.navigationController?.pushViewController(dvc, animated: true)
         comicsTableView.deselectRow(at: indexPath, animated: true)  // снимаем выделение с выделенной ячейки таблицы (чтобы была "отжата")
     }
+    
+    // обработчик события - будет показана ячейка с индексом indexPath.row
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        presenter.willDisplayComic(at: indexPath.row) // обработчик появления i-той строки списка
+    }
 }
 
 // работа с поиском
@@ -91,6 +106,15 @@ extension ComicsListView: UISearchResultsUpdating {
 }
 
 extension ComicsListView: ComicsListViewProtocol {
+    
+    func setActivityIndicatorState(state: Bool) {
+        if (state) {
+            activityIndicator.startAnimating()
+        } else {
+            activityIndicator.stopAnimating()
+        }
+    }
+    
     
     // строка поиска пуста?
     func checkSearchBarIsEmpty() -> Bool {
