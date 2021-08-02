@@ -87,8 +87,6 @@ extension ComicsListView: UITableViewDataSource {
 extension ComicsListView: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         presenter.selectedComicVC(at: indexPath.row)
-        //let dvc = presenter.selectedComicVC(at: indexPath.row)
-        //self.navigationController?.pushViewController(dvc, animated: true)
         comicsTableView.deselectRow(at: indexPath, animated: true)  // снимаем выделение с выделенной ячейки таблицы (чтобы была "отжата")
     }
     

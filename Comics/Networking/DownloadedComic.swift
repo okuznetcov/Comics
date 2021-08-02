@@ -1,4 +1,4 @@
-import Foundation
+import UIKit
 
 // структуры для парсинга JSON-ответа Marvel API
 
@@ -24,3 +24,5 @@ struct ImageData: Codable {
     var path: String
     var `extension`: String
 }
+
+

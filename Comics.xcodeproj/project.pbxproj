@@ -25,7 +25,6 @@
 		3386C18A26B022CA00FADF81 /* Comic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3386C18926B022CA00FADF81 /* Comic.swift */; };
 		3386C18D26B031CD00FADF81 /* Networking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3386C18C26B031CD00FADF81 /* Networking.swift */; };
 		33955FD426B1563B00A97362 /* SelectedComicView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33955FD326B1563B00A97362 /* SelectedComicView.swift */; };
-		33955FD626B1602100A97362 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33955FD526B1602100A97362 /* StorageManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,7 +49,6 @@
 		3386C18926B022CA00FADF81 /* Comic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comic.swift; sourceTree = "<group>"; };
 		3386C18C26B031CD00FADF81 /* Networking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Networking.swift; sourceTree = "<group>"; };
 		33955FD326B1563B00A97362 /* SelectedComicView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedComicView.swift; sourceTree = "<group>"; };
-		33955FD526B1602100A97362 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		6FEDDF6CDACFF76A645C354B /* Pods-Comics.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Comics.release.xcconfig"; path = "Target Support Files/Pods-Comics/Pods-Comics.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -131,14 +129,6 @@
 			path = etc;
 			sourceTree = "<group>";
 		};
-		3379F96926B177EB00EBFAC6 /* RealmStorage */ = {
-			isa = PBXGroup;
-			children = (
-				33955FD526B1602100A97362 /* StorageManager.swift */,
-			);
-			path = RealmStorage;
-			sourceTree = "<group>";
-		};
 		3386C16026B009AF00FADF81 = {
 			isa = PBXGroup;
 			children = (
@@ -164,7 +154,6 @@
 				333FB69326B2F7FA00B934C3 /* ComicsList */,
 				333FB69626B2F82900B934C3 /* SelectedComic */,
 				333FB69926B3008A00B934C3 /* Networking */,
-				3379F96926B177EB00EBFAC6 /* RealmStorage */,
 				3386C18726B022A600FADF81 /* App */,
 				3386C17A26B009B000FADF81 /* Info.plist */,
 			);
@@ -342,7 +331,6 @@
 				3379F96B26B1787D00EBFAC6 /* ComicsListViewCell.swift in Sources */,
 				333FB6A826B44AEA00B934C3 /* ComicsListRouter.swift in Sources */,
 				333FB6A026B4301400B934C3 /* ComicsListFactory.swift in Sources */,
-				33955FD626B1602100A97362 /* StorageManager.swift in Sources */,
 				333FB68B26B2BEE800B934C3 /* DownloadedComic.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

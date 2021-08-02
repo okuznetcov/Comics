@@ -11,6 +11,8 @@ class Networking {
         return Networking()
     }
     
+    var imagesCache = NSCache<NSString, ComicImage>()       // кэш для изображений
+    
     fileprivate func timestamp() -> Double {        // получаем timestamp который хочет Marvel API для авторизации
         return Date().timeIntervalSince1970
     }
@@ -63,15 +65,25 @@ class Networking {
     }
     
     
-    func fetchImage(url: String, imageExtension: String) -> Data? {
-        let imageUrl = getImageUrl(url: url, imageExtension: imageExtension)
-        if imageUrl.contains("image_not_available") {
-            print("image_not_available")
-            return nil
-        }
-        if let data = try? Data(contentsOf: URL(string: imageUrl)!) {
-            print(imageUrl)
-            return UIImage(data: data)?.pngData()
+    func fetchImage(url: String, imageExtension: String) -> ComicImage? {
+        print("request for image \(url)")
+        let imageUrl = getImageUrl(url: url, imageExtension: imageExtension)            // формируем URL картинки
+        if let cachedImage = imagesCache.object(forKey: imageUrl as NSString) {         // если картинка находится в кэше по URL - отдаем ее просто так
+            print("returning image \(url) as cached")
+            return cachedImage
+        } else {                                    // если картинки нет в кэше
+            if imageUrl.contains("image_not_available") {                               // если картинка - это Mарвелавская заглушка для комикса без картинки, то отдаем nil
+                print("image \(url) is N/a")
+                return nil
+            }
+                                                                                        // если картинка это не заглушка
+            if let data = try? Data(contentsOf: URL(string: imageUrl)!) {               // грузим картинку из интернета
+                //print(imageUrl)
+                print("making web request for \(url)")
+                let comicImage = ComicImage(imageData: (UIImage(data: data)?.pngData())!)   // создаем экземпляр класса, хранящий картинку и помещаем ее данные туда
+                self.imagesCache.setObject(comicImage, forKey: imageUrl as NSString)    // сохраняем полученный класс в кэш
+                return comicImage
+            }
         }
         return nil
     }

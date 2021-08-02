@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import RealmSwift
 
 protocol ComicsListPresenterProtocol: AnyObject {
     func selectedComicVC(at selectedRow: Int)                           // получить вью контроллер выбранного комикса
@@ -24,6 +23,7 @@ class ComicsListPresenter: ComicsListPresenterProtocol {
         let page = index / (comicsToDownload - 8)                       // расчет индекса текущей страницы
         if (lastPage < page) {                                          // если индекс новой страницы больше чем последней максимальной
             lastPage = page                                             // текущая страница будет являться новой максимальной
+            print("page \(lastPage)")
             let offset = lastPage * comicsToDownload                    // расчет сдвига для получения нужных записей Marvel API
             loadComics(limit: comicsToDownload, offset: offset)         // начальное обращение к Marvel API
         }
@@ -33,19 +33,18 @@ class ComicsListPresenter: ComicsListPresenterProtocol {
     private let comicsToDownload = 25;                  // сколько комиксов загружать за раз
     private var lastPage = 0;                           // последняя наибольшая "страница" списка комиксов (за страницу принимаем блок из 25 очередных загружаемых записей
     
-    private var comics: Results<Comic>!                 // все записи о комиксах
-    private var filteredComics: Results<Comic>!         // все записи о комиксах
+    private var comics = [Comic]()                 // все записи о комиксах
+    private var filteredComics = [Comic]()         // все записи о комиксах
     private var router: ComicsListRouterProtocol!
     unowned let view: ComicsListViewProtocol
     var fetchedComics: [DownloadedComic] = []
+    var comicCache = NSCache<NSString, ComicImage>()
     
     private let API = Networking.shared
     
     required init(view: ComicsListViewProtocol, router: ComicsListRouterProtocol) {
-        //StoargeManager.saveObject(Comic(marvelId: "3421", title: "Test", description: "suprehero", pageCount: "20"))
         self.view = view
         self.router = router
-        comics = realm.objects(Comic.self)
         loadComics(limit: comicsToDownload, offset: 0)        // начальное обращение к Marvel API
     }
     
@@ -68,40 +67,38 @@ class ComicsListPresenter: ComicsListPresenterProtocol {
         })
     }
     
-    // Кэширование загруженных комиксов в БД Realm и загрузка картинок
+    // Обработка загруженных комиксов и загрузка картинок
     private func processLoadedComics(apiData: APIComicResult?) {
         
         self.fetchedComics.append(contentsOf: (apiData?.data.results)!)     // поместим загруженные комиксы в fetchedComics
+        
         for comic in self.fetchedComics {
-            // если очередной загруженный комикс отсутсвутет в БД Realm
-            if (self.comics.filter("marvelId == %@", "\(comic.id)").count == 0) {
-                print(comic.id)
-                StoargeManager.saveObject(              // сохранение комикса в Realm
-                    Comic(marvelId: "\(comic.id)",
-                          title: comic.title,
-                          description: comic.description,
-                          pageCount: "\(comic.pageCount)")
-                    )
-                view.reloadTable()          // обновление таблицы
-            }
+            
+            let newComic = Comic(marvelId: "\(comic.id)",
+                                 title: comic.title,
+                                 description: comic.description,
+                                 pageCount: "\(comic.pageCount)",
+                                 path: comic.thumbnail.path,
+                                 ext: comic.thumbnail.extension)
+            
+            comics.append(newComic)
         }
         
-        for comic in self.comics {
-            if (comic.imageData != nil) { continue }        // будем загружать картинки для комиксов, у которых картинки отсуствуют
-            // 
-            let fetchedComicWithImageURL = self.fetchedComics.first(where: {"\($0.id)" == comic.marvelId})
-            guard let fetchedComicWithImageURL = fetchedComicWithImageURL else { continue }
-            let imagePath = fetchedComicWithImageURL.thumbnail.path
-            let imageEx = fetchedComicWithImageURL.thumbnail.extension
-                
-            DispatchQueue.global().async {
-                let imageData = self.API.fetchImage(url: imagePath, imageExtension: imageEx)
-                guard let imageData = imageData else { return }
-                DispatchQueue.main.async {
-                    StoargeManager.editObjectImage(comic, imageData: imageData)
-                    self.view.reloadTable()
+        view.reloadTable()
+        
+        
+        // ЖЕНЯ:
+        // закоменть эту строку для проверки кэширования изображений: старые записи будут добавляться к уже имеющимся
+        self.fetchedComics.removeAll()     // <--------------
+        
+        for comic in comics {
+                DispatchQueue.global().async {
+                    let imageData = self.API.fetchImage(url: comic.imagePath, imageExtension: comic.imageExt)
+                    DispatchQueue.main.async {
+                        comic.comicImage = imageData
+                        self.view.reloadTable()
+                    }
                 }
-            }
         }
     }
     
@@ -110,6 +107,7 @@ class ComicsListPresenter: ComicsListPresenterProtocol {
         if (isFiltering) {
             return filteredComics.count
         } else {
+            print(comics.count)
             return comics.count
         }
     }
@@ -129,11 +127,15 @@ class ComicsListPresenter: ComicsListPresenterProtocol {
     }
 
     func searchBarTextChanged(searchText: String) {
-        filteredComics = comics.filter("title CONTAINS[c] %@", searchText) // игнорируем регистр, ищем по названию
+        filteredComics = comics.filter({$0.title.lowercased().contains(searchText.lowercased())})
         view.reloadTable()
     }
     
     func selectedComicVC(at selectedRow: Int) {
-        router.navigateToPushedViewController(comic: comics[selectedRow])
+        if (isFiltering) {
+            return router.navigateToPushedViewController(comic: filteredComics[selectedRow])
+        } else {
+            return router.navigateToPushedViewController(comic: comics[selectedRow])
+        }
     }
 }
