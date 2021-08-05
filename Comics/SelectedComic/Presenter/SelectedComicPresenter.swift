@@ -1,10 +1,3 @@
-//
-//  SelectedComicPresenter.swift
-//  Comics
-//
-//  Created by Oleg Kuznetsov on 29.07.2021.
-//
-
 import Foundation
 
 protocol SelectedComicPresenterProtocol {
@@ -12,15 +5,21 @@ protocol SelectedComicPresenterProtocol {
    func getNumOfRows() -> Int
 }
 
-class SelectedComicPresenter: SelectedComicPresenterProtocol {
-
-    unowned let view: SelectedComicViewProtocol
+final class SelectedComicPresenter: SelectedComicPresenterProtocol {
+    
+    // MARK: -- Переменные и константы --------------------------------------------------------
+    
     var comic: Comic!
+    unowned let view: SelectedComicViewProtocol
+    
+    // MARK: -- Инициализатор -----------------------------------------------------------------
     
     required init(view: SelectedComicViewProtocol, comic: Comic) {
         self.view = view
         self.comic = comic
     }
+    
+    // MARK: -- Публичные методы ---------------------------------------------------------------
     
     func getNumOfRows() -> Int {
         return 4

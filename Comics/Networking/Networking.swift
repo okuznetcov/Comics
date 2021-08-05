@@ -1,41 +1,16 @@
 import CryptoKit
 import UIKit
 
-let PUBLIC_KEY = "3da5d03b94d2533740ede81f1d6baf7f";
-let PRIVATE_KEY = "6da1e100b192ee4ac295b0dc7675b6b69425d4d3";
-let ENTRY_POINT = "https://gateway.marvel.com/v1/public"
-
-class Networking {
+final class Networking {
     
-    static var shared: Networking {
-        return Networking()
+    private enum Consts {
+        static let publicKey: String = "3da5d03b94d2533740ede81f1d6baf7f"
+        static let privateKey: String = "6da1e100b192ee4ac295b0dc7675b6b69425d4d3"
+        static let entryPoint: String = "https://gateway.marvel.com/v1/public"
     }
     
-    var imagesCache = NSCache<NSString, ComicImage>()       // кэш для изображений
-    
-    fileprivate func timestamp() -> Double {        // получаем timestamp который хочет Marvel API для авторизации
-        return Date().timeIntervalSince1970
-    }
-    
-    fileprivate func getHash(timestamp: Double) -> String {     // генерируем хэш из timestamp и двух ключей
-        let d = "\(timestamp)\(PRIVATE_KEY)\(PUBLIC_KEY)"
-        let r = Insecure.MD5.hash(data: d.data(using: .utf8)!)
-        return String("\(r)".split(separator: " ")[2])
-    }
-    
-    fileprivate func addAuthCredits(url: String, params: String) -> String {        // добавляем ключи к url
-        let currentTimestamp = timestamp()
-        return "\(ENTRY_POINT)\(url)?ts=\(currentTimestamp)&\(params)&apikey=\(PUBLIC_KEY)&hash=\(getHash(timestamp: currentTimestamp))"
-    }
-    
-    fileprivate func getImageUrl(url: String, imageExtension: String) -> String {        // генерируем URL для изображения
-        var address = "\(url)/portrait_incredible.\(imageExtension)"
-        if (address.hasPrefix("http")) {
-            address = "https" + address.dropFirst(4)
-        }
-        return address
-    }
-    
+    static  var shared: Networking { return Networking() }
+    private var imagesCache: [String: ComicImage] = [:]                 // кэш для изображений
     
     func fetchComics(url: String, params: String, completion: @escaping (Result<APIComicResult?, Error>) -> Void) {
         
@@ -68,7 +43,7 @@ class Networking {
     func fetchImage(url: String, imageExtension: String) -> ComicImage? {
         print("request for image \(url)")
         let imageUrl = getImageUrl(url: url, imageExtension: imageExtension)            // формируем URL картинки
-        if let cachedImage = imagesCache.object(forKey: imageUrl as NSString) {         // если картинка находится в кэше по URL - отдаем ее просто так
+        if let cachedImage = self.imagesCache[imageUrl] {                                    // если картинка находится в кэше по URL - отдаем ее просто так
             print("returning image \(url) as cached")
             return cachedImage
         } else {                                    // если картинки нет в кэше
@@ -76,15 +51,38 @@ class Networking {
                 print("image \(url) is N/a")
                 return nil
             }
-                                                                                        // если картинка это не заглушка
+                                                                                    // если картинка это не заглушка
             if let data = try? Data(contentsOf: URL(string: imageUrl)!) {               // грузим картинку из интернета
                 //print(imageUrl)
                 print("making web request for \(url)")
                 let comicImage = ComicImage(imageData: (UIImage(data: data)?.pngData())!)   // создаем экземпляр класса, хранящий картинку и помещаем ее данные туда
-                self.imagesCache.setObject(comicImage, forKey: imageUrl as NSString)    // сохраняем полученный класс в кэш
+                self.imagesCache[imageUrl] = comicImage    // сохраняем полученный класс в кэш
                 return comicImage
             }
         }
         return nil
+    }
+    
+    private func timestamp() -> Double {        // получаем timestamp который хочет Marvel API для авторизации
+        return Date().timeIntervalSince1970
+    }
+    
+    private func getHash(timestamp: Double) -> String {     // генерируем хэш из timestamp и двух ключей
+        let d = "\(timestamp)\(Consts.privateKey)\(Consts.publicKey)"
+        let r = Insecure.MD5.hash(data: d.data(using: .utf8)!)
+        return String("\(r)".split(separator: " ")[2])
+    }
+    
+    private func addAuthCredits(url: String, params: String) -> String {        // добавляем ключи к url
+        let currentTimestamp = timestamp()
+        return "\(Consts.entryPoint)\(url)?ts=\(currentTimestamp)&\(params)&apikey=\(Consts.publicKey)&hash=\(getHash(timestamp: currentTimestamp))"
+    }
+    
+    private func getImageUrl(url: String, imageExtension: String) -> String {        // генерируем URL для изображения
+        var address = "\(url)/portrait_incredible.\(imageExtension)"
+        if (address.hasPrefix("http")) {
+            address = "https" + address.dropFirst(4)
+        }
+        return address
     }
 }

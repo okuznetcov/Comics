@@ -1,13 +1,16 @@
 import UIKit
 
 // ячейка обложки комикса
-class imageCell: UITableViewCell {
+final class ImageCell: UITableViewCell {
     
-    static let identifier = "imageCell"
+    // MARK: -- Переменные и константы --------------------------------------------------------
     
-    var image = UIImageView()       // обложка
+    static let identifier = "ImageCell"
+    private var image = UIImageView()       // обложка
     
-    // инициализируем ячейка
+    // MARK: -- Инициализатор -----------------------------------------------------------------
+    
+    // инициализируем ячейку
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         addSubview(image)
@@ -18,33 +21,51 @@ class imageCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    fileprivate func configureImage() {
+    // MARK: -- Публичные методы ---------------------------------------------------------------
+    
+    // конфигуратор: принимает ссылку и формат изображения для запроса
+    func configure(path: String, ext: String) {
+
+        ComicsRepository.loadImage(imagePath: path,
+                                   imageExtension: ext,
+                                   completion: { downloadedImageData in
+                                        self.image.image = ImageExtractor.getImage(from: downloadedImageData)
+                                   })
+    }
+    
+    // MARK: -- Приветные методы ---------------------------------------------------------------
+    
+    private func configureImage() {
         image.layer.cornerRadius = 10       // сглаженные углы
         image.clipsToBounds = true
         image.translatesAutoresizingMaskIntoConstraints = false
-        image.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-        image.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
-        image.heightAnchor.constraint(equalToConstant: 200).isActive = true
-        image.widthAnchor.constraint(equalTo: image.heightAnchor, multiplier: 2/3).isActive = true
+        NSLayoutConstraint.activate([
+            image.centerYAnchor.constraint(equalTo: centerYAnchor),
+            image.centerXAnchor.constraint(equalTo: centerXAnchor),
+            image.heightAnchor.constraint(equalToConstant: 200),
+            image.widthAnchor.constraint(equalTo: image.heightAnchor, multiplier: 2/3)
+        ])
     }
 }
 
-
 // Ячейка текстового значения
-class textCell: UITableViewCell {
+final class TextCell: UITableViewCell {
     
-    static let identifier = "textCell"
+    // MARK: -- Переменные и константы --------------------------------------------------------
     
-    var title = UILabel()                       // значение поля
-    var cellDescription = UILabel()             // описание поля
+    static  let identifier = "TextCell"
+    private var text = UILabel()                       // значение поля
+    private var title = UILabel()                      // описание поля
     
-    // инициализируем ячейка
+    // MARK: -- Инициализатор -----------------------------------------------------------------
+    
+    // инициализируем ячейку
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        addSubview(text)
         addSubview(title)
-        addSubview(cellDescription)
-        cellDescription.textColor = .gray         // сделаем описание поля серым цветом и меньшего размера, чем значение
-        cellDescription.font = cellDescription.font.withSize(13)
+        title.textColor = .gray         // сделаем описание поля серым цветом и меньшего размера, чем значение
+        title.font = title.font.withSize(13)
         setupConstraints()
     }
     
@@ -52,21 +73,35 @@ class textCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    fileprivate func setupConstraints() {
-        cellDescription.numberOfLines = 0
-        cellDescription.adjustsFontSizeToFitWidth = true  // текст будет уменьшаться, чтобы влезать по ширине экрана
-        cellDescription.translatesAutoresizingMaskIntoConstraints = false
-        cellDescription.leftAnchor.constraint(equalTo: leftAnchor, constant: 12).isActive = true
-        cellDescription.topAnchor.constraint(equalTo: topAnchor, constant: 4).isActive = true
-        cellDescription.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12).isActive = true
-        
+    // MARK: -- Публичные методы ---------------------------------------------------------------
+    
+    // конфигуратор: принимает на вход текст и описание текстового поля
+    func configure(text: String, title: String) {
+        self.text.text = text
+        self.title.text = title
+    }
+    
+    // MARK: -- Приветные методы ---------------------------------------------------------------
+    
+    private func setupConstraints() {
         title.numberOfLines = 0
         title.adjustsFontSizeToFitWidth = true  // текст будет уменьшаться, чтобы влезать по ширине экрана
         title.translatesAutoresizingMaskIntoConstraints = false
-        title.leftAnchor.constraint(equalTo: leftAnchor, constant: 12).isActive = true
-        title.topAnchor.constraint(equalTo: cellDescription.bottomAnchor, constant: 3).isActive = true
-        title.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -20).isActive = true
-        title.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12).isActive = true
+        NSLayoutConstraint.activate([
+            title.leftAnchor.constraint(equalTo: leftAnchor, constant: 12),
+            title.topAnchor.constraint(equalTo: topAnchor, constant: 4),
+            title.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12)
+        ])
+        
+        text.numberOfLines = 0
+        text.adjustsFontSizeToFitWidth = true  // текст будет уменьшаться, чтобы влезать по ширине экрана
+        text.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            text.leftAnchor.constraint(equalTo: leftAnchor, constant: 12),
+            text.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 3),
+            text.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -20),
+            text.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12)
+        ])
     }
 }
 

@@ -1,7 +1,6 @@
-
 import Foundation
 
-class Comic {
+struct Comic {
     
     var marvelId = ""                     // id комикса в Marvel API
     var title = ""                        // название
@@ -24,12 +23,9 @@ class Comic {
     
 }
 
-
 // изображение комикса
-class ComicImage {
-    
+struct ComicImage {
     var imageData: Data?
-    
     init(imageData: Data) {
         self.imageData = imageData
     }

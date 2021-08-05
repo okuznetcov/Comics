@@ -11,51 +11,65 @@ protocol SelectedComicViewProtocol: AnyObject {
     
 }
 
-class SelectedComicView: UIViewController, SelectedComicViewProtocol{
+final class SelectedComicView: UIViewController, SelectedComicViewProtocol {
+    
+    // MARK: -- Переменные и константы --------------------------------------------------------
+   
+    private var image = UIImageView()
+    private let tableView = UITableView()
     
     var presenter: SelectedComicPresenterProtocol!
-    var image = UIImageView()
-    let tableView = UITableView()
+    
+    // MARK: -- Точка входа -------------------------------------------------------------------
     
     override func viewDidLoad() {
         navigationItem.title = "Комикс"
         setupTableView()
     }
     
+    // MARK: -- Публичные методы ---------------------------------------------------------------
+    
     // при перевороте устройства обновляем TableView, чтобы заново рассчиать высоту строк
     override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
         tableView.reloadData()
     }
     
-    fileprivate func configureImage() {
+    // MARK: -- Приватные методы ---------------------------------------------------------------
+    
+    private func configureImage() {
         image.layer.cornerRadius = 10       // сглаженные углы
         image.clipsToBounds = true
         image.translatesAutoresizingMaskIntoConstraints = false
-        image.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        image.heightAnchor.constraint(equalToConstant: 300).isActive = true
-        image.widthAnchor.constraint(equalTo: image.heightAnchor, multiplier: 2/3).isActive = true
+        NSLayoutConstraint.activate([
+            image.topAnchor.constraint(equalTo: view.topAnchor),
+            image.heightAnchor.constraint(equalToConstant: 300),
+            image.widthAnchor.constraint(equalTo: image.heightAnchor, multiplier: 2/3)
+        ])
     }
     
     // настройка и установка констрейнов для таблицы
-    fileprivate func setupTableView() {
+    private func setupTableView() {
         view.addSubview(tableView)
         tableView.dataSource = self
         tableView.delegate = self
         tableView.rowHeight = 68
         tableView.separatorColor = .white
         tableView.allowsSelection = false
-        tableView.register(textCell.self, forCellReuseIdentifier: "textCell")
-        tableView.register(imageCell.self, forCellReuseIdentifier: "imageCell")
+        tableView.register(TextCell.self, forCellReuseIdentifier: "TextCell")
+        tableView.register(ImageCell.self, forCellReuseIdentifier: "ImageCell")
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.topAnchor.constraint(equalTo:view.topAnchor).isActive = true
-        tableView.leftAnchor.constraint(equalTo:view.leftAnchor).isActive = true
-        tableView.rightAnchor.constraint(equalTo:view.rightAnchor).isActive = true
-        tableView.bottomAnchor.constraint(equalTo:view.bottomAnchor).isActive = true
+        NSLayoutConstraint.activate([
+            tableView.topAnchor.constraint(equalTo:view.topAnchor),
+            tableView.leftAnchor.constraint(equalTo:view.leftAnchor),
+            tableView.rightAnchor.constraint(equalTo:view.rightAnchor),
+            tableView.bottomAnchor.constraint(equalTo:view.bottomAnchor)
+        ])
     }
 }
 
-// два расширения UITableViewDataSource и UITableViewDelegate которые хочет TableView
 
+// MARK: -- Расширения ----------------------------------------------------------------
+// два расширения UITableViewDataSource и UITableViewDelegate которые хочет TableView
 extension SelectedComicView: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return presenter.getNumOfRows()
@@ -71,27 +85,24 @@ extension SelectedComicView: UITableViewDataSource {
         // в зависимости от id строки таблицы, показываем нужные данные в порядке
         switch indexPath.row {
         case 0:
-            let currentCell = tableView.dequeueReusableCell(withIdentifier: "imageCell", for: indexPath) as! imageCell
-            currentCell.image.image = imageLoader.getImage(comic: comic)
+            let currentCell = tableView.dequeueReusableCell(withIdentifier: "ImageCell", for: indexPath) as! ImageCell
+            currentCell.configure(path: comic.imagePath, ext: comic.imageExt)
             cell = currentCell
             tableView.rowHeight = 230       // для картинки задаем большую высоту строки
         case 1:
-            let currentCell = tableView.dequeueReusableCell(withIdentifier: "textCell", for: indexPath) as! textCell
-            currentCell.title.text = comic.title
-            currentCell.cellDescription.text = "Название"
+            let currentCell = tableView.dequeueReusableCell(withIdentifier: "TextCell", for: indexPath) as! TextCell
+            currentCell.configure(text: comic.title, title: "Название")
             cell = currentCell
         case 2:
-            let currentCell = tableView.dequeueReusableCell(withIdentifier: "textCell", for: indexPath) as! textCell
-            currentCell.title.text = comic.pageCount
-            currentCell.cellDescription.text = "Количество страниц"
+            let currentCell = tableView.dequeueReusableCell(withIdentifier: "TextCell", for: indexPath) as! TextCell
+            currentCell.configure(text: comic.pageCount ?? "Недоступно", title: "Количество страниц")
             cell = currentCell
         case 3:
-            let currentCell = tableView.dequeueReusableCell(withIdentifier: "textCell", for: indexPath) as! textCell
-            currentCell.title.text = comic.descr
-            currentCell.cellDescription.text = "Описание"
+            let currentCell = tableView.dequeueReusableCell(withIdentifier: "TextCell", for: indexPath) as! TextCell
+            currentCell.configure(text: comic.descr ?? "Недоступно", title: "Описание")
             cell = currentCell
         default:
-            cell = tableView.dequeueReusableCell(withIdentifier: "textCell", for: indexPath) as! textCell
+            cell = tableView.dequeueReusableCell(withIdentifier: "textCell", for: indexPath) as! TextCell
         }
 
         return cell

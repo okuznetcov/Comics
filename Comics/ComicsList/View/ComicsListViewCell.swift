@@ -1,11 +1,14 @@
 import UIKit
 
-class ComicsListViewCell: UITableViewCell {
+final class ComicsListViewCell: UITableViewCell {
     
-    static let identifier = "ComicsListViewCell"
+    // MARK: -- Переменные и константы --------------------------------------------------------
     
-    var image = UIImageView()       // пока что я ячейке будет название и обложка
-    var title = UILabel()
+    static  let identifier = "ComicsListViewCell"
+    private var image      = UIImageView()
+    private var title      = UILabel()
+    
+    // MARK: -- Инициализатор -----------------------------------------------------------------
     
     // инициализируем ячейку
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -21,23 +24,48 @@ class ComicsListViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    fileprivate func configureImage() {
-        image.layer.cornerRadius = 10       // сглаженные углы
-        image.clipsToBounds = true
-        image.translatesAutoresizingMaskIntoConstraints = false
-        image.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-        image.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12).isActive = true
-        image.heightAnchor.constraint(equalToConstant: 130).isActive = true
-        image.widthAnchor.constraint(equalTo: image.heightAnchor, multiplier: 2/3).isActive = true
+    // MARK: -- Публичные методы ---------------------------------------------------------------
+    
+    // конфигуратор: принимает вью-модель как аргумент и сеттит ячейку
+    func configure(with viewModel: ComicCellViewModel) {
+        
+        title.text = viewModel.title
+        ComicsRepository.loadImage(imagePath: viewModel.imagePath,
+                                   imageExtension: viewModel.imageExt,
+                                   completion: { downloadedImageData in
+                                        self.image.image = ImageExtractor.getImage(from: downloadedImageData)
+                                   })
     }
     
-    fileprivate func configureTitle() {
+    /*override func prepareForReuse() {
+        image.image = nil
+    }*/
+    
+    // MARK: -- Приватные методы ---------------------------------------------------------------
+    
+    private func configureImage() {
+        image.layer.masksToBounds = true
+        image.clipsToBounds = true
+        image.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            image.centerYAnchor.constraint(equalTo: centerYAnchor),
+            image.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            image.heightAnchor.constraint(equalToConstant: 40),
+            image.widthAnchor.constraint(equalTo: image.heightAnchor),
+        ])
+        
+        image.layer.cornerRadius = 20
+    }
+    
+    private func configureTitle() {
         title.numberOfLines = 0
         title.adjustsFontSizeToFitWidth = true  // текст будет уменьшаться, чтобы влезать по ширине экрана
         title.translatesAutoresizingMaskIntoConstraints = false
-        title.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-        title.leadingAnchor.constraint(equalTo: image.trailingAnchor, constant: 20).isActive = true
-        title.heightAnchor.constraint(equalToConstant: 130).isActive = true
-        title.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12).isActive = true
+        NSLayoutConstraint.activate([
+                title.centerYAnchor.constraint(equalTo: centerYAnchor),
+                title.leadingAnchor.constraint(equalTo: image.trailingAnchor, constant: 20),
+                title.heightAnchor.constraint(equalToConstant: 40),
+                title.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12),
+        ])
     }
 }
