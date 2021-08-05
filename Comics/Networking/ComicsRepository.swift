@@ -1,7 +1,7 @@
 import UIKit
 import Kingfisher
 
-class ComicsRepository {
+final class ComicsRepository {
     
     private static let API = Networking.shared
     private var runningRequests = [UUID: URLSessionDataTask]()
