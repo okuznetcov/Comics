@@ -5,8 +5,8 @@ final class ImageCell: UITableViewCell {
     
     // MARK: -- Переменные и константы --------------------------------------------------------
     
-    static let identifier = "ImageCell"
-    private var image = UIImageView()       // обложка
+    static  let identifier = "ImageCell"
+    private let image = UIImageView()       // обложка
     
     // MARK: -- Инициализатор -----------------------------------------------------------------
     
@@ -26,11 +26,17 @@ final class ImageCell: UITableViewCell {
     // конфигуратор: принимает ссылку и формат изображения для запроса
     func configure(path: String, ext: String) {
 
-        ComicsRepository.loadImage(imagePath: path,
+        // non-kf
+        /*ComicsRepository.loadImage(imagePath: path,
                                    imageExtension: ext,
                                    completion: { downloadedImageData in
                                         self.image.image = ImageExtractor.getImage(from: downloadedImageData)
-                                   })
+                                   })*/
+        
+        // kf
+        ComicsRepository.loadImageKf(for: image,
+                                     imagePath: path,
+                                     imageExtension: ext)
     }
     
     // MARK: -- Приветные методы ---------------------------------------------------------------
@@ -54,8 +60,8 @@ final class TextCell: UITableViewCell {
     // MARK: -- Переменные и константы --------------------------------------------------------
     
     static  let identifier = "TextCell"
-    private var text = UILabel()                       // значение поля
-    private var title = UILabel()                      // описание поля
+    private let text = UILabel()                       // значение поля
+    private let title = UILabel()                      // описание поля
     
     // MARK: -- Инициализатор -----------------------------------------------------------------
     

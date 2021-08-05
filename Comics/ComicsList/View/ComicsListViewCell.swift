@@ -5,8 +5,8 @@ final class ComicsListViewCell: UITableViewCell {
     // MARK: -- Переменные и константы --------------------------------------------------------
     
     static  let identifier = "ComicsListViewCell"
-    private var image      = UIImageView()
-    private var title      = UILabel()
+    private let image      = UIImageView()
+    private let title      = UILabel()
     
     // MARK: -- Инициализатор -----------------------------------------------------------------
     
@@ -30,16 +30,24 @@ final class ComicsListViewCell: UITableViewCell {
     func configure(with viewModel: ComicCellViewModel) {
         
         title.text = viewModel.title
-        ComicsRepository.loadImage(imagePath: viewModel.imagePath,
+        
+        // non-kf
+        /*ComicsRepository.loadImage(imagePath: viewModel.imagePath,
                                    imageExtension: viewModel.imageExt,
                                    completion: { downloadedImageData in
                                         self.image.image = ImageExtractor.getImage(from: downloadedImageData)
-                                   })
+                                   })*/
+        
+        
+        // kf
+        ComicsRepository.loadImageKf(for: image,
+                                     imagePath: viewModel.imagePath,
+                                     imageExtension: viewModel.imageExt)
     }
     
-    /*override func prepareForReuse() {
-        image.image = nil
-    }*/
+    override func prepareForReuse() {
+        ComicsRepository.stopLoadingKf(for: image)
+    }
     
     // MARK: -- Приватные методы ---------------------------------------------------------------
     

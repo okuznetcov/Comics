@@ -1,4 +1,5 @@
 import UIKit
+import Kingfisher
 
 class ComicsRepository {
     
@@ -9,7 +10,6 @@ class ComicsRepository {
     static func loadComics(limit: Int, offset: Int, completion: @escaping ([Comic]) -> () ) {
         
         ComicsRepository.API.fetchComics(url: "/comics", params: "limit=\(limit)&offset=\(offset)", completion: { result in
-            //guard let self = self else { return }
             DispatchQueue.main.async {
                 switch result {
                     case .success(let apiData):
@@ -38,6 +38,7 @@ class ComicsRepository {
         })
     }
     
+    // загрузка изображений как раньше (теперь не используется)
     static func loadImage(imagePath: String, imageExtension: String, completion: @escaping (ComicImage?) -> ()) {
         DispatchQueue.global().async {
             let imageData = self.API.fetchImage(url: imagePath, imageExtension: imageExtension)
@@ -45,5 +46,16 @@ class ComicsRepository {
                 completion(imageData)
             }
         }
+    }
+    
+    // загрузка изображений с помощью Kingfisher
+    static func loadImageKf(for image: UIImageView, imagePath: String, imageExtension: String) {
+        let url = URL(string: API.getImageUrl(url: imagePath,
+                                                           imageExtension: imageExtension))
+        image.kf.setImage(with: url)
+    }
+    
+    static func stopLoadingKf(for image: UIImageView) {
+        image.kf.cancelDownloadTask()
     }
 }

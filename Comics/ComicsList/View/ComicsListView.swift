@@ -219,19 +219,11 @@ extension ComicsListView: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
             return Consts.footerRowHeight
     }
-    
-    /*func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        return UIView()
-    }
-
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 0
-    }*/
 }
 
 // работа с поиском
 extension ComicsListView: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
-        presenter.searchBarTextChanged(searchText: searchController.searchBar.text!)
+        presenter.searchBarTextChanged(searchText: searchController.searchBar.text ?? "")
     }
 }

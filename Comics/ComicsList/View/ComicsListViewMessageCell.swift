@@ -4,9 +4,9 @@ final class ComicsListViewMessageCell: UITableViewCell {
     
     // MARK: -- Переменные и константы --------------------------------------------------------
     
-    static let identifier = "ComicsListViewMessageCell"
-    private var image = UIImageView()       // изображение
-    private var text = UILabel()
+    static  let identifier = "ComicsListViewMessageCell"
+    private let image = UIImageView()       // изображение
+    private let text = UILabel()
     
     // MARK: -- Инициализатор -----------------------------------------------------------------
     

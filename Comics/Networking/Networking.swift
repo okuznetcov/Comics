@@ -12,14 +12,23 @@ final class Networking {
     static  var shared: Networking { return Networking() }
     private var imagesCache: [String: ComicImage] = [:]                 // кэш для изображений
     
+    func getImageUrl(url: String, imageExtension: String) -> String {        // генерируем URL для изображения
+        var address = "\(url)/portrait_incredible.\(imageExtension)"
+        if (address.hasPrefix("http")) {
+            address = "https" + address.dropFirst(4)
+        }
+        return address
+    }
+    
     func fetchComics(url: String, params: String, completion: @escaping (Result<APIComicResult?, Error>) -> Void) {
         
         let validUrl = addAuthCredits(url: url, params: params)
         print(validUrl)
         
         let session = URLSession(configuration: .default)
+        guard let url = URL(string: validUrl) else { return }
 
-        session.dataTask(with: URL(string: validUrl)!) { (data, _, err) in
+        session.dataTask(with: url) { (data, _, err) in
             
             if let error = err {
                 print(error.localizedDescription)
@@ -51,11 +60,13 @@ final class Networking {
                 print("image \(url) is N/a")
                 return nil
             }
+            
+            guard let url = URL(string: imageUrl) else { return nil }
                                                                                     // если картинка это не заглушка
-            if let data = try? Data(contentsOf: URL(string: imageUrl)!) {               // грузим картинку из интернета
+            if let data = try? Data(contentsOf: url) {               // грузим картинку из интернета
                 //print(imageUrl)
                 print("making web request for \(url)")
-                let comicImage = ComicImage(imageData: (UIImage(data: data)?.pngData())!)   // создаем экземпляр класса, хранящий картинку и помещаем ее данные туда
+                let comicImage = ComicImage(imageData: (UIImage(data: data)?.pngData()) ?? Data())   // создаем экземпляр класса, хранящий картинку и помещаем ее данные туда
                 self.imagesCache[imageUrl] = comicImage    // сохраняем полученный класс в кэш
                 return comicImage
             }
@@ -69,20 +80,12 @@ final class Networking {
     
     private func getHash(timestamp: Double) -> String {     // генерируем хэш из timestamp и двух ключей
         let d = "\(timestamp)\(Consts.privateKey)\(Consts.publicKey)"
-        let r = Insecure.MD5.hash(data: d.data(using: .utf8)!)
+        let r = Insecure.MD5.hash(data: d.data(using: .utf8) ?? Data())
         return String("\(r)".split(separator: " ")[2])
     }
     
     private func addAuthCredits(url: String, params: String) -> String {        // добавляем ключи к url
         let currentTimestamp = timestamp()
         return "\(Consts.entryPoint)\(url)?ts=\(currentTimestamp)&\(params)&apikey=\(Consts.publicKey)&hash=\(getHash(timestamp: currentTimestamp))"
-    }
-    
-    private func getImageUrl(url: String, imageExtension: String) -> String {        // генерируем URL для изображения
-        var address = "\(url)/portrait_incredible.\(imageExtension)"
-        if (address.hasPrefix("http")) {
-            address = "https" + address.dropFirst(4)
-        }
-        return address
     }
 }

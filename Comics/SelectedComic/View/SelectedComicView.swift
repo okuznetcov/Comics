@@ -15,7 +15,7 @@ final class SelectedComicView: UIViewController, SelectedComicViewProtocol {
     
     // MARK: -- Переменные и константы --------------------------------------------------------
    
-    private var image = UIImageView()
+    private let image = UIImageView()
     private let tableView = UITableView()
     
     var presenter: SelectedComicPresenterProtocol!
@@ -78,31 +78,31 @@ extension SelectedComicView: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
        
         let comic = presenter.getComic()
-        let cell: UITableViewCell!
+        let cell: UITableViewCell
         tableView.rowHeight = UITableView.automaticDimension;
         tableView.estimatedRowHeight = 68.0;
         
         // в зависимости от id строки таблицы, показываем нужные данные в порядке
         switch indexPath.row {
         case 0:
-            let currentCell = tableView.dequeueReusableCell(withIdentifier: "ImageCell", for: indexPath) as! ImageCell
+            guard let currentCell = tableView.dequeueReusableCell(withIdentifier: "ImageCell", for: indexPath) as? ImageCell else { return UITableViewCell() }
             currentCell.configure(path: comic.imagePath, ext: comic.imageExt)
             cell = currentCell
             tableView.rowHeight = 230       // для картинки задаем большую высоту строки
         case 1:
-            let currentCell = tableView.dequeueReusableCell(withIdentifier: "TextCell", for: indexPath) as! TextCell
+            guard let currentCell = tableView.dequeueReusableCell(withIdentifier: "TextCell", for: indexPath) as? TextCell else { return UITableViewCell() }
             currentCell.configure(text: comic.title, title: "Название")
             cell = currentCell
         case 2:
-            let currentCell = tableView.dequeueReusableCell(withIdentifier: "TextCell", for: indexPath) as! TextCell
+            guard let currentCell = tableView.dequeueReusableCell(withIdentifier: "TextCell", for: indexPath) as? TextCell else { return UITableViewCell() }
             currentCell.configure(text: comic.pageCount ?? "Недоступно", title: "Количество страниц")
             cell = currentCell
         case 3:
-            let currentCell = tableView.dequeueReusableCell(withIdentifier: "TextCell", for: indexPath) as! TextCell
+            guard let currentCell = tableView.dequeueReusableCell(withIdentifier: "TextCell", for: indexPath) as? TextCell else { return UITableViewCell() }
             currentCell.configure(text: comic.descr ?? "Недоступно", title: "Описание")
             cell = currentCell
         default:
-            cell = tableView.dequeueReusableCell(withIdentifier: "textCell", for: indexPath) as! TextCell
+            cell = UITableViewCell()
         }
 
         return cell

@@ -20,11 +20,7 @@ final class ComicsListPresenter: ComicsListPresenterProtocol {
     private var filteredComics: [Comic] = []            // отфильтрованные записи о комиксах (для работы с поиском)
     private var isFirstLoadComplete = false             // завершена ли первая загрузка комиксов?
     
-    /*private var isFiltering: Bool {                     // пользователь производит поиск?
-        return view.checkSearchIsActive() && !view.checkSearchBarIsEmpty()
-    }*/
-    
-    private var router: ComicsListRouterProtocol!
+    private let router: ComicsListRouterProtocol
     unowned let view: ComicsListViewProtocol
    
     // MARK: -- Инициализатор -----------------------------------------------------------------

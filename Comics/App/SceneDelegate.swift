@@ -19,11 +19,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window.rootViewController = UINavigationController(rootViewController: ComicsListFactory.make()) // Your initial view controller.
         window.makeKeyAndVisible()
         self.window = window
-        
-        /*guard let windowScene = (scene as? UIWindowScene) else { return }
-        window = UIWindow(frame: windowScene.coordinateSpace.bounds)\
-        window?.windowScene = windowScene
-        let mainView = ComicsListFactory.make()*/
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

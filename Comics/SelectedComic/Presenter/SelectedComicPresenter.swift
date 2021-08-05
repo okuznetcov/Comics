@@ -9,7 +9,7 @@ final class SelectedComicPresenter: SelectedComicPresenterProtocol {
     
     // MARK: -- Переменные и константы --------------------------------------------------------
     
-    var comic: Comic!
+    let comic: Comic
     unowned let view: SelectedComicViewProtocol
     
     // MARK: -- Инициализатор -----------------------------------------------------------------
