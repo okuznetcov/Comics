@@ -8,15 +8,44 @@
 import UIKit
 
 protocol SelectedComicViewProtocol: AnyObject {
-    
+    func setTextCell(text: String, title: String)            // заменить имеющиеся комиксы во вью-моделях ячеек на новые
+    func setImageCell(imagePath: String, imageExt: String)            // заменить имеющиеся комиксы во вью-моделях ячеек на новые
+}
+
+// MARK: -- Вью-модели ячеек --------------------------------------------------------
+
+// Вью-модель текстовой ячейки (поле)
+struct TextCellViewModel {
+    let text: String                            // сообщение
+    let title: String                           // название изображения
+}
+
+// вью-модель ячейки изображения (обложки)
+struct ImageViewModel {
+    let imagePath: String                       // url  изображения
+    let imageExt: String                        // формат изображения (необходимо для API-запроса)
 }
 
 final class SelectedComicView: UIViewController, SelectedComicViewProtocol {
-    
+
     // MARK: -- Переменные и константы --------------------------------------------------------
    
-    private let image = UIImageView()
-    private let tableView = UITableView()
+    private var tableView = UITableView()
+    private var dataSource: SectionedTableViewDataSource?
+    
+    private var textCellViewModels: [TextCellViewModel] = [] {        // массив вью-моделей для текстовых ячеек
+        didSet {
+            print(textCellViewModels.count)
+            renderTableViewImageCell(imageCellViewModels: imageCellViewModels, textCellViewModels: textCellViewModels)
+        }
+    }
+    
+    private var imageCellViewModels: [ImageViewModel] = [] {        // массив вью-моделей для ячеек изображений (обложки)
+        didSet {
+            print(imageCellViewModels.count)
+            renderTableViewImageCell(imageCellViewModels: imageCellViewModels, textCellViewModels: textCellViewModels)
+        }
+    }
     
     var presenter: SelectedComicPresenterProtocol!
     
@@ -34,25 +63,24 @@ final class SelectedComicView: UIViewController, SelectedComicViewProtocol {
         tableView.reloadData()
     }
     
-    // MARK: -- Приватные методы ---------------------------------------------------------------
-    
-    private func configureImage() {
-        image.layer.cornerRadius = 10       // сглаженные углы
-        image.clipsToBounds = true
-        image.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            image.topAnchor.constraint(equalTo: view.topAnchor),
-            image.heightAnchor.constraint(equalToConstant: 300),
-            image.widthAnchor.constraint(equalTo: image.heightAnchor, multiplier: 2/3)
-        ])
+    func setTextCell(text: String, title: String) {
+        textCellViewModels.append(TextCellViewModel(text: text,
+                                                    title: title))
     }
+    
+    func setImageCell(imagePath: String, imageExt: String) {
+        imageCellViewModels.append(ImageViewModel(imagePath: imagePath,
+                                                  imageExt:  imageExt))
+    }
+    
+    // MARK: -- Приватные методы ---------------------------------------------------------------
     
     // настройка и установка констрейнов для таблицы
     private func setupTableView() {
         view.addSubview(tableView)
-        tableView.dataSource = self
         tableView.delegate = self
-        tableView.rowHeight = 68
+        tableView.rowHeight = UITableView.automaticDimension;
+        tableView.estimatedRowHeight = 68
         tableView.separatorColor = .white
         tableView.allowsSelection = false
         tableView.register(TextCell.self, forCellReuseIdentifier: "TextCell")
@@ -65,49 +93,20 @@ final class SelectedComicView: UIViewController, SelectedComicViewProtocol {
             tableView.bottomAnchor.constraint(equalTo:view.bottomAnchor)
         ])
     }
+    
+    private func renderTableViewImageCell(imageCellViewModels: [ImageViewModel], textCellViewModels: [TextCellViewModel]) {
+        
+        dataSource = SectionedTableViewDataSource(dataSources: [
+                TableViewCustomDataSource.make(for: imageCellViewModels, withCellIdentifier: "ImageCell"),
+                TableViewCustomDataSource.make(for: textCellViewModels, withCellIdentifier: "TextCell")])
+
+        tableView.dataSource = dataSource
+        tableView.reloadData()
+    }
 }
 
 
 // MARK: -- Расширения ----------------------------------------------------------------
-// два расширения UITableViewDataSource и UITableViewDelegate которые хочет TableView
-extension SelectedComicView: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return presenter.getNumOfRows()
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-       
-        let comic = presenter.getComic()
-        let cell: UITableViewCell
-        tableView.rowHeight = UITableView.automaticDimension;
-        tableView.estimatedRowHeight = 68.0;
-        
-        // в зависимости от id строки таблицы, показываем нужные данные в порядке
-        switch indexPath.row {
-        case 0:
-            guard let currentCell = tableView.dequeueReusableCell(withIdentifier: "ImageCell", for: indexPath) as? ImageCell else { return UITableViewCell() }
-            currentCell.configure(path: comic.imagePath, ext: comic.imageExt)
-            cell = currentCell
-            tableView.rowHeight = 230       // для картинки задаем большую высоту строки
-        case 1:
-            guard let currentCell = tableView.dequeueReusableCell(withIdentifier: "TextCell", for: indexPath) as? TextCell else { return UITableViewCell() }
-            currentCell.configure(text: comic.title, title: "Название")
-            cell = currentCell
-        case 2:
-            guard let currentCell = tableView.dequeueReusableCell(withIdentifier: "TextCell", for: indexPath) as? TextCell else { return UITableViewCell() }
-            currentCell.configure(text: comic.pageCount ?? "Недоступно", title: "Количество страниц")
-            cell = currentCell
-        case 3:
-            guard let currentCell = tableView.dequeueReusableCell(withIdentifier: "TextCell", for: indexPath) as? TextCell else { return UITableViewCell() }
-            currentCell.configure(text: comic.descr ?? "Недоступно", title: "Описание")
-            cell = currentCell
-        default:
-            cell = UITableViewCell()
-        }
-
-        return cell
-    }
-}
 
 extension SelectedComicView: UITableViewDelegate {
 

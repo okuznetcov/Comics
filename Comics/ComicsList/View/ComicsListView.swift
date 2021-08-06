@@ -42,7 +42,7 @@ final class ComicsListView: UIViewController, ComicsListViewProtocol {
     
     private enum Consts {
         static let rowHeight: CGFloat = 64                      // высота ячейки таблицы
-        static let footerRowHeight: CGFloat = 64
+        static let footerRowHeight: CGFloat = 64                // высота футера таблицы
     }
     
     private var showActivityIndicator: Bool = false {           // показ индикатора загрузки
@@ -61,9 +61,9 @@ final class ComicsListView: UIViewController, ComicsListViewProtocol {
         }
     }
     
-    private var ComicCellViewModels: [ComicCellViewModel] = [] {        // массив вью-моделей для ячеек
+    private var comicCellViewModels: [ComicCellViewModel] = [] {        // массив вью-моделей для ячеек
         didSet {
-            renderTableViewComicsCells(ComicCellViewModels)
+            renderTableViewComicsCells(comicCellViewModels)
         }
     }
     
@@ -117,7 +117,7 @@ final class ComicsListView: UIViewController, ComicsListViewProtocol {
     // добавить комиксы к имеющимся во вью-моделях ячеек
     func addComics(_ comics: [Comic]) {
         for comic in comics {
-            ComicCellViewModels.append(ComicCellViewModel(title:     comic.title,
+            comicCellViewModels.append(ComicCellViewModel(title:     comic.title,
                                                           imagePath: comic.imagePath,
                                                           imageExt:  comic.imageExt))
         }
@@ -125,9 +125,9 @@ final class ComicsListView: UIViewController, ComicsListViewProtocol {
     
     // заменить имеющиеся комиксы во вью-моделях ячеек на новые
     func setComics(_ comics: [Comic]) {
-        ComicCellViewModels.removeAll()
+        comicCellViewModels.removeAll()
         for comic in comics {
-            ComicCellViewModels.append(ComicCellViewModel(title:     comic.title,
+            comicCellViewModels.append(ComicCellViewModel(title:     comic.title,
                                                           imagePath: comic.imagePath,
                                                           imageExt:  comic.imageExt))
         }
@@ -163,7 +163,7 @@ final class ComicsListView: UIViewController, ComicsListViewProtocol {
     
     // показ загруженных записей из массива вью-моделей
     private func renderTableViewComicsCells(_ viewModels: [ComicCellViewModel]) {
-        comicsCellsDataSource = .displayData(for: viewModels, withCellidentifier: "ComicsListViewCell")
+        comicsCellsDataSource = .displayData(for: viewModels, withCellIdentifier: "ComicsListViewCell")
         comicsTableView.dataSource = comicsCellsDataSource
         comicsTableView.rowHeight = Consts.rowHeight
         comicsTableView.separatorColor = .separator
@@ -173,7 +173,7 @@ final class ComicsListView: UIViewController, ComicsListViewProtocol {
     
     // показ сообщения на весь экран
     private func renderTableViewMessage(_ viewModel: ComicsListMessageViewModel) {
-        messageCellsDataSource = .displayData(for: [viewModel], withCellidentifier: "ComicsListViewMessageCell")
+        messageCellsDataSource = .displayData(for: [viewModel], withCellIdentifier: "ComicsListViewMessageCell")
         comicsTableView.dataSource = messageCellsDataSource
         comicsTableView.rowHeight = comicsTableView.visibleSize.height * 0.7
         comicsTableView.separatorColor = .clear

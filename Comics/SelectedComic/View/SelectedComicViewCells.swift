@@ -24,7 +24,7 @@ final class ImageCell: UITableViewCell {
     // MARK: -- Публичные методы ---------------------------------------------------------------
     
     // конфигуратор: принимает ссылку и формат изображения для запроса
-    func configure(path: String, ext: String) {
+    func configure(with viewModel: ImageViewModel) {
 
         // non-kf
         /*ComicsRepository.loadImage(imagePath: path,
@@ -35,11 +35,11 @@ final class ImageCell: UITableViewCell {
         
         // kf
         ComicsRepository.loadImageKf(for: image,
-                                     imagePath: path,
-                                     imageExtension: ext)
+                                     imagePath: viewModel.imagePath,
+                                     imageExtension: viewModel.imageExt)
     }
     
-    // MARK: -- Приветные методы ---------------------------------------------------------------
+    // MARK: -- Приватные методы ---------------------------------------------------------------
     
     private func configureImage() {
         image.layer.cornerRadius = 10       // сглаженные углы
@@ -48,8 +48,8 @@ final class ImageCell: UITableViewCell {
         NSLayoutConstraint.activate([
             image.centerYAnchor.constraint(equalTo: centerYAnchor),
             image.centerXAnchor.constraint(equalTo: centerXAnchor),
-            image.heightAnchor.constraint(equalToConstant: 200),
-            image.widthAnchor.constraint(equalTo: image.heightAnchor, multiplier: 2/3)
+            image.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: 10),
+            image.bottomAnchor.constraint(greaterThanOrEqualTo: bottomAnchor, constant: -10),
         ])
     }
 }
@@ -82,12 +82,12 @@ final class TextCell: UITableViewCell {
     // MARK: -- Публичные методы ---------------------------------------------------------------
     
     // конфигуратор: принимает на вход текст и описание текстового поля
-    func configure(text: String, title: String) {
-        self.text.text = text
-        self.title.text = title
+    func configure(with viewModel: TextCellViewModel) {
+        self.text.text = viewModel.text
+        self.title.text = viewModel.title
     }
     
-    // MARK: -- Приветные методы ---------------------------------------------------------------
+    // MARK: -- Приватные методы ---------------------------------------------------------------
     
     private func setupConstraints() {
         title.numberOfLines = 0

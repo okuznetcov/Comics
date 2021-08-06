@@ -1,15 +1,13 @@
 import Foundation
 
 protocol SelectedComicPresenterProtocol {
-   func getComic() -> Comic
-   func getNumOfRows() -> Int
 }
 
 final class SelectedComicPresenter: SelectedComicPresenterProtocol {
     
     // MARK: -- Переменные и константы --------------------------------------------------------
     
-    let comic: Comic
+    private let comic: Comic
     unowned let view: SelectedComicViewProtocol
     
     // MARK: -- Инициализатор -----------------------------------------------------------------
@@ -17,15 +15,17 @@ final class SelectedComicPresenter: SelectedComicPresenterProtocol {
     required init(view: SelectedComicViewProtocol, comic: Comic) {
         self.view = view
         self.comic = comic
-    }
-    
-    // MARK: -- Публичные методы ---------------------------------------------------------------
-    
-    func getNumOfRows() -> Int {
-        return 4
-    }
-    
-    func getComic() -> Comic {
-        return comic
+        
+        view.setImageCell(imagePath: comic.imagePath,
+                          imageExt: comic.imageExt)
+        
+        view.setTextCell(text: comic.title,
+                         title: "Название")
+        
+        view.setTextCell(text: comic.pageCount ?? "0",
+                         title: "Количество страниц")
+        
+        view.setTextCell(text: comic.descr ?? "Недоступно",
+                         title: "Описание")
     }
 }
