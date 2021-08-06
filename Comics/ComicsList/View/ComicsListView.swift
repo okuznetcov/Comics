@@ -49,22 +49,21 @@ final class ComicsListView: UIViewController, ComicsListViewProtocol {
         didSet(oldValue) {
             if (showActivityIndicator != oldValue) {
                 print("activity indicator set to \(showActivityIndicator)")
-                //comicsTableView.reloadData()
             }
         }
     }
     
     private var isDisplayingNotFoundMessage: Bool = false {             // показ сообщения о 0 доступных записей
         didSet(oldValue) {                                              // для заданных параметров поиска
-            if (isDisplayingNotFoundMessage != oldValue) {
-                comicsTableView.reloadData()
+            if (isDisplayingNotFoundMessage) {
+                renderTableViewMessage(notFoundMessage)                 // если нужно показать сообщение, передаем его на показ
             }
         }
     }
     
-    private var ComicCellViewModels: [ComicCellViewModel] = [] {    // массив вью-моделей для ячеек
+    private var ComicCellViewModels: [ComicCellViewModel] = [] {        // массив вью-моделей для ячеек
         didSet {
-            comicsTableView.reloadData()
+            renderTableViewComicsCells(ComicCellViewModels)
         }
     }
     
@@ -79,6 +78,10 @@ final class ComicsListView: UIViewController, ComicsListViewProtocol {
     
     private let searchController = UISearchController(searchResultsController: nil)
     private let comicsTableView = UITableView(frame: CGRect.init(), style: .grouped)
+    private let notFoundMessage = ComicsListMessageViewModel(message: Messages.NotFound.message, imageName: Messages.NotFound.imageName)
+    private var comicsCellsDataSource: TableViewCustomDataSource<ComicCellViewModel>?
+    private var messageCellsDataSource: TableViewCustomDataSource<ComicsListMessageViewModel>?
+    
     var presenter: ComicsListPresenterProtocol!
     
     // MARK: -- Точка входа --------------------------------------------------------
@@ -135,7 +138,6 @@ final class ComicsListView: UIViewController, ComicsListViewProtocol {
     // настройка и установка констрейнов для таблицы
     private func setupTableView() {
         view.addSubview(comicsTableView)
-        comicsTableView.dataSource = self
         comicsTableView.delegate = self
         comicsTableView.register(ComicsListViewCell.self, forCellReuseIdentifier: "ComicsListViewCell")
         comicsTableView.register(ComicsListViewMessageCell.self, forCellReuseIdentifier: "ComicsListViewMessageCell")
@@ -158,41 +160,29 @@ final class ComicsListView: UIViewController, ComicsListViewProtocol {
         searchController.searchBar.placeholder = "Поиск"
         navigationItem.searchController = searchController          // добавляем строку поиска в NavBar
     }
+    
+    // показ загруженных записей из массива вью-моделей
+    private func renderTableViewComicsCells(_ viewModels: [ComicCellViewModel]) {
+        comicsCellsDataSource = .displayData(for: viewModels, withCellidentifier: "ComicsListViewCell")
+        comicsTableView.dataSource = comicsCellsDataSource
+        comicsTableView.rowHeight = Consts.rowHeight
+        comicsTableView.separatorColor = .separator
+        comicsTableView.isScrollEnabled = true
+        comicsTableView.reloadData()
+    }
+    
+    // показ сообщения на весь экран
+    private func renderTableViewMessage(_ viewModel: ComicsListMessageViewModel) {
+        messageCellsDataSource = .displayData(for: [viewModel], withCellidentifier: "ComicsListViewMessageCell")
+        comicsTableView.dataSource = messageCellsDataSource
+        comicsTableView.rowHeight = comicsTableView.visibleSize.height * 0.7
+        comicsTableView.separatorColor = .clear
+        comicsTableView.isScrollEnabled = false
+        comicsTableView.reloadData()
+    }
 }
 
 // MARK: -- Расширения ----------------------------------------------------------------
-
-// два расширения UITableViewDataSource и UITableViewDelegate которые хочет TableView
-extension ComicsListView: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if isDisplayingNotFoundMessage {
-            return 1
-        }
-        return ComicCellViewModels.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        if isDisplayingNotFoundMessage {
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: "ComicsListViewMessageCell",
-                                                           for: indexPath)
-                      as? ComicsListViewMessageCell else { return UITableViewCell() }
-            
-            cell.configure(with: ComicsListMessageViewModel(message: Messages.NotFound.message, imageName: Messages.NotFound.imageName))
-            tableView.rowHeight = tableView.visibleSize.height * 0.7
-            tableView.separatorColor = .clear
-            tableView.isScrollEnabled = false
-            return cell
-        } else {
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: "ComicsListViewCell", for: indexPath) as? ComicsListViewCell else { return UITableViewCell() }
-            cell.configure(with: ComicCellViewModels[indexPath.row])
-            tableView.rowHeight = Consts.rowHeight
-            tableView.separatorColor = .separator
-            tableView.isScrollEnabled = true
-            return cell
-        }
-    }
-}
 
 extension ComicsListView: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -202,7 +192,7 @@ extension ComicsListView: UITableViewDelegate {
     
     // обработчик события - будет показана ячейка с индексом indexPath.row
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        presenter.willDisplayComic(at: indexPath.row) // обработчик появления i-той строки списка
+        presenter.willDisplayComic(at: indexPath.row)               // обработчик появления i-той строки списка
     }
     
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
