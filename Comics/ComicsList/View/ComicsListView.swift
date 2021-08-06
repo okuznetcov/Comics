@@ -141,15 +141,9 @@ final class ComicsListView: UIViewController, ComicsListViewProtocol {
         comicsTableView.delegate = self
         comicsTableView.register(ComicsListViewCell.self, forCellReuseIdentifier: "ComicsListViewCell")
         comicsTableView.register(ComicsListViewMessageCell.self, forCellReuseIdentifier: "ComicsListViewMessageCell")
-        comicsTableView.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            comicsTableView.topAnchor.constraint(equalTo:view.topAnchor),
-            comicsTableView.leftAnchor.constraint(equalTo:view.leftAnchor),
-            comicsTableView.rightAnchor.constraint(equalTo:view.rightAnchor),
-            comicsTableView.bottomAnchor.constraint(equalTo:view.bottomAnchor)
-        ])
-        
+        comicsTableView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
         comicsTableView.rowHeight = Consts.rowHeight
     }
     

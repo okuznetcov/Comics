@@ -42,15 +42,17 @@ final class ImageCell: UITableViewCell {
     // MARK: -- Приватные методы ---------------------------------------------------------------
     
     private func configureImage() {
+        
         image.layer.cornerRadius = 10       // сглаженные углы
         image.clipsToBounds = true
-        image.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            image.centerYAnchor.constraint(equalTo: centerYAnchor),
-            image.centerXAnchor.constraint(equalTo: centerXAnchor),
-            image.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: 10),
-            image.bottomAnchor.constraint(greaterThanOrEqualTo: bottomAnchor, constant: -10),
-        ])
+        
+        image.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.top.equalToSuperview().inset(10)
+            make.height.equalTo(UIScreen.main.bounds.height / 2.5)
+            make.width.equalTo(self.snp.height).dividedBy(1.6)
+            make.bottom.equalToSuperview().inset(10)
+        }
     }
 }
 
@@ -92,22 +94,22 @@ final class TextCell: UITableViewCell {
     private func setupConstraints() {
         title.numberOfLines = 0
         title.adjustsFontSizeToFitWidth = true  // текст будет уменьшаться, чтобы влезать по ширине экрана
-        title.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            title.leftAnchor.constraint(equalTo: leftAnchor, constant: 12),
-            title.topAnchor.constraint(equalTo: topAnchor, constant: 4),
-            title.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12)
-        ])
+        
+        title.snp.makeConstraints { make in
+            make.top.equalToSuperview().inset(4)
+            make.left.equalToSuperview().inset(12)
+            make.right.equalToSuperview().inset(12)
+        }
         
         text.numberOfLines = 0
         text.adjustsFontSizeToFitWidth = true  // текст будет уменьшаться, чтобы влезать по ширине экрана
-        text.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            text.leftAnchor.constraint(equalTo: leftAnchor, constant: 12),
-            text.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 3),
-            text.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -20),
-            text.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12)
-        ])
+        
+        text.snp.makeConstraints { make in
+            make.top.equalTo(title.snp.bottom).offset(3)
+            make.left.equalToSuperview().inset(12)
+            make.right.equalToSuperview().inset(12)
+            make.bottom.equalToSuperview().inset(20)
+        }
     }
 }
 

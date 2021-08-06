@@ -39,14 +39,11 @@ final class ComicsListViewMessageCell: UITableViewCell {
     private func configureImage() {
         image.alpha = 0.5
         image.clipsToBounds = true
-        image.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            image.centerXAnchor.constraint(equalTo: centerXAnchor),
-            image.centerYAnchor.constraint(equalTo: centerYAnchor),
-            image.heightAnchor.constraint(equalToConstant: 48),
-            image.widthAnchor.constraint(equalTo: image.heightAnchor)
-        ])
+        
+        image.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.size.equalTo(48)
+        }
     }
     
     private func configureTitle() {
@@ -54,12 +51,12 @@ final class ComicsListViewMessageCell: UITableViewCell {
         text.textAlignment = .center
         text.textColor = .gray
         text.adjustsFontSizeToFitWidth = false  // текст будет уменьшаться, чтобы влезать по ширине экрана
-        text.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-                text.centerXAnchor.constraint(equalTo: centerXAnchor),
-                text.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 16),
-                text.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 4),
-                text.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -4),
-        ])
+
+        text.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.right.equalToSuperview().inset(4)
+            make.left.equalToSuperview().inset(4)
+            make.top.equalTo(image.snp.bottom).offset(16)
+        }
     }
 }

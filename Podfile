@@ -7,4 +7,5 @@ use_frameworks!
 
 target 'Comics' do
   pod 'Kingfisher', '~> 6.0'
+  pod 'SnapKit', '~> 5.0.0'
 end

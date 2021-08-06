@@ -85,13 +85,10 @@ final class SelectedComicView: UIViewController, SelectedComicViewProtocol {
         tableView.allowsSelection = false
         tableView.register(TextCell.self, forCellReuseIdentifier: "TextCell")
         tableView.register(ImageCell.self, forCellReuseIdentifier: "ImageCell")
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo:view.topAnchor),
-            tableView.leftAnchor.constraint(equalTo:view.leftAnchor),
-            tableView.rightAnchor.constraint(equalTo:view.rightAnchor),
-            tableView.bottomAnchor.constraint(equalTo:view.bottomAnchor)
-        ])
+        
+        tableView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
     }
     
     private func renderTableViewImageCell(imageCellViewModels: [ImageViewModel], textCellViewModels: [TextCellViewModel]) {

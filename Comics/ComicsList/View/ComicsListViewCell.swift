@@ -4,6 +4,10 @@ final class ComicsListViewCell: UITableViewCell {
     
     // MARK: -- Переменные и константы --------------------------------------------------------
     
+    private enum Consts {
+        static let imageSideSize = 56
+    }
+    
     static  let identifier = "ComicsListViewCell"
     private let image      = UIImageView()
     private let title      = UILabel()
@@ -52,28 +56,30 @@ final class ComicsListViewCell: UITableViewCell {
     // MARK: -- Приватные методы ---------------------------------------------------------------
     
     private func configureImage() {
-        image.layer.masksToBounds = true
-        image.clipsToBounds = true
-        image.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            image.centerYAnchor.constraint(equalTo: centerYAnchor),
-            image.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
-            image.heightAnchor.constraint(equalToConstant: 40),
-            image.widthAnchor.constraint(equalTo: image.heightAnchor),
-        ])
         
-        image.layer.cornerRadius = 20
+        image.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+            make.left.equalToSuperview().inset(20)
+            make.size.equalTo(Consts.imageSideSize)
+        }
+        
+        image.contentMode = UIView.ContentMode.scaleAspectFill
+        image.layer.cornerRadius = CGFloat(Consts.imageSideSize / 2)
+        image.layer.masksToBounds = false
+        image.clipsToBounds = true
     }
     
     private func configureTitle() {
         title.numberOfLines = 0
         title.adjustsFontSizeToFitWidth = true  // текст будет уменьшаться, чтобы влезать по ширине экрана
-        title.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-                title.centerYAnchor.constraint(equalTo: centerYAnchor),
-                title.leadingAnchor.constraint(equalTo: image.trailingAnchor, constant: 20),
-                title.heightAnchor.constraint(equalToConstant: 40),
-                title.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12),
-        ])
+        
+        title.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+            make.left.equalTo(image.snp.right).offset(20)
+            make.right.equalToSuperview().inset(20)
+            make.height.equalTo(40)
+        }
+        
+        
     }
 }

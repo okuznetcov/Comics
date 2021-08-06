@@ -1,4 +1,5 @@
 import UIKit
+import SnapKit
 
 struct ComicsListFactory {
     static func make() -> ComicsListView {
