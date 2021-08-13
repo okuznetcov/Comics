@@ -1,7 +1,7 @@
 import UIKit
 import SnapKit
 
-final class ComicsListViewMessageCell: UITableViewCell {
+final class ComicsListViewMessageCell: UITableViewCell, ConfigurableCell {
     
     // MARK: -- Переменные и константы --------------------------------------------------------
     
@@ -30,7 +30,10 @@ final class ComicsListViewMessageCell: UITableViewCell {
     // MARK: -- Публичные методы ---------------------------------------------------------------
     
     // конфигуратор: принимает вью-модель как аргумент и сеттит ячейку
-    func configure(with viewModel: ComicsListMessageViewModel) {
+    func configure(with viewModel: CellModel) {
+        
+        guard let viewModel = viewModel as? ComicsListMessageViewModel else { return }
+        
         image.image = UIImage(named: viewModel.imageName)
         text.text = viewModel.message
     }
@@ -52,7 +55,7 @@ final class ComicsListViewMessageCell: UITableViewCell {
         text.textAlignment = .center
         text.textColor = .gray
         text.adjustsFontSizeToFitWidth = false  // текст будет уменьшаться, чтобы влезать по ширине экрана
-
+        
         text.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.right.equalToSuperview().inset(4)

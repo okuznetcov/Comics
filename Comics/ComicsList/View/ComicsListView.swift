@@ -16,15 +16,17 @@ protocol ComicsListViewProtocol: AnyObject {
 // MARK: -- Вью-модели ячеек --------------------------------------------------------
 
 // Вью-модель ячейки предупреждения (показывается на весь экран)
-struct ComicsListMessageViewModel {
-    let message: String                         // сообщение
-    let imageName: String                       // название изображения
+struct ComicsListMessageViewModel: CellModel {
+    var identifier: String = "ComicsListViewMessageCell"
+    let message: String                             // сообщение
+    let imageName: String                           // название изображения
 }
 
-struct ComicCellViewModel {                     // Вью-модель ячейки в списке комиксов
-    let title: String                           // название комикса
-    let imagePath: String                       // url  изображения
-    let imageExt: String                        // формат изображения (необходимо для API-запроса)
+struct ComicCellViewModel: CellModel {              // Вью-модель ячейки в списке комиксов
+    var identifier: String = "ComicsListViewCell"
+    let title: String                               // название комикса
+    let imagePath: String                           // url  изображения
+    let imageExt: String                            // формат изображения (необходимо для API-запроса)
 }
 
 
@@ -80,8 +82,7 @@ final class ComicsListView: UIViewController, ComicsListViewProtocol {
     private let searchController = UISearchController(searchResultsController: nil)
     private let comicsTableView = UITableView(frame: CGRect.init(), style: .grouped)
     private let notFoundMessage = ComicsListMessageViewModel(message: Messages.NotFound.message, imageName: Messages.NotFound.imageName)
-    private var comicsCellsDataSource: TableViewCustomDataSource<ComicCellViewModel>?
-    private var messageCellsDataSource: TableViewCustomDataSource<ComicsListMessageViewModel>?
+    private var comicsCellsDataSource: TableViewCustomDataSource<CellModel, CellModel>?
     
     var presenter: ComicsListPresenterProtocol!
     
@@ -158,7 +159,7 @@ final class ComicsListView: UIViewController, ComicsListViewProtocol {
     
     // показ загруженных записей из массива вью-моделей
     private func renderTableViewComicsCells(_ viewModels: [ComicCellViewModel]) {
-        comicsCellsDataSource = .displayData(for: viewModels, withCellIdentifier: "ComicsListViewCell")
+        comicsCellsDataSource = .make(models: viewModels)
         comicsTableView.dataSource = comicsCellsDataSource
         comicsTableView.rowHeight = Consts.rowHeight
         comicsTableView.separatorColor = .separator
@@ -168,8 +169,8 @@ final class ComicsListView: UIViewController, ComicsListViewProtocol {
     
     // показ сообщения на весь экран
     private func renderTableViewMessage(_ viewModel: ComicsListMessageViewModel) {
-        messageCellsDataSource = .displayData(for: [viewModel], withCellIdentifier: "ComicsListViewMessageCell")
-        comicsTableView.dataSource = messageCellsDataSource
+        comicsCellsDataSource = .make(models: [viewModel])
+        comicsTableView.dataSource = comicsCellsDataSource
         comicsTableView.rowHeight = comicsTableView.visibleSize.height * 0.7
         comicsTableView.separatorColor = .clear
         comicsTableView.isScrollEnabled = false
@@ -202,7 +203,7 @@ extension ComicsListView: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-            return Consts.footerRowHeight
+        return Consts.footerRowHeight
     }
 }
 

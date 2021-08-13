@@ -27,7 +27,7 @@ final class Networking {
         
         let session = URLSession(configuration: .default)
         guard let url = URL(string: validUrl) else { return }
-
+        
         session.dataTask(with: url) { (data, _, err) in
             
             if let error = err {
@@ -62,7 +62,7 @@ final class Networking {
             }
             
             guard let url = URL(string: imageUrl) else { return nil }
-                                                                                    // если картинка это не заглушка
+            // если картинка это не заглушка
             if let data = try? Data(contentsOf: url) {               // грузим картинку из интернета
                 //print(imageUrl)
                 print("making web request for \(url)")
