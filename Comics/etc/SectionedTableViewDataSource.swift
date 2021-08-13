@@ -1,6 +1,6 @@
 import UIKit
 
-class SectionedTableViewDataSource: NSObject {
+final class SectionedTableViewDataSource: NSObject {
     private let dataSources: [UITableViewDataSource]
 
     init(dataSources: [UITableViewDataSource]) {

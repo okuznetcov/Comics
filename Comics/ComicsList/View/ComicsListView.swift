@@ -1,4 +1,5 @@
 import UIKit
+import SnapKit
 
 protocol ComicsListViewProtocol: AnyObject {
     func setActivityIndicatorVisibility(visible: Bool)  // установка видимости индикатора загрузки записей

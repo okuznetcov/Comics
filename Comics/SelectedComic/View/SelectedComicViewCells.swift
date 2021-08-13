@@ -1,4 +1,5 @@
 import UIKit
+import SnapKit
 
 // ячейка обложки комикса
 final class ImageCell: UITableViewCell {

@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SnapKit
 
 protocol SelectedComicViewProtocol: AnyObject {
     func setTextCell(text: String, title: String)            // заменить имеющиеся комиксы во вью-моделях ячеек на новые
