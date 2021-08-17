@@ -1,7 +1,7 @@
 import UIKit
 import SnapKit
 
-final class ComicsListViewCell: UITableViewCell {
+final class ComicsListViewCell: UITableViewCell, ConfigurableCell {
     
     // MARK: -- Переменные и константы --------------------------------------------------------
     
@@ -32,16 +32,18 @@ final class ComicsListViewCell: UITableViewCell {
     // MARK: -- Публичные методы ---------------------------------------------------------------
     
     // конфигуратор: принимает вью-модель как аргумент и сеттит ячейку
-    func configure(with viewModel: ComicCellViewModel) {
+    func configure(with viewModel: CellModel) {
+        
+        guard let viewModel = viewModel as? ComicCellViewModel else { return }
         
         title.text = viewModel.title
         
         // non-kf
         /*ComicsRepository.loadImage(imagePath: viewModel.imagePath,
-                                   imageExtension: viewModel.imageExt,
-                                   completion: { downloadedImageData in
-                                        self.image.image = ImageExtractor.getImage(from: downloadedImageData)
-                                   })*/
+         imageExtension: viewModel.imageExt,
+         completion: { downloadedImageData in
+         self.image.image = ImageExtractor.getImage(from: downloadedImageData)
+         })*/
         
         
         // kf
@@ -80,7 +82,5 @@ final class ComicsListViewCell: UITableViewCell {
             make.right.equalToSuperview().inset(20)
             make.height.equalTo(40)
         }
-        
-        
     }
 }

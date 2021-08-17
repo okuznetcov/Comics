@@ -1,8 +1,12 @@
 import UIKit
 import SnapKit
 
+protocol ConfigurableCell {
+    func configure(with viewModel: CellModel)
+}
+
 // ячейка обложки комикса
-final class ImageCell: UITableViewCell {
+final class ImageCell: UITableViewCell, ConfigurableCell {
     
     // MARK: -- Переменные и константы --------------------------------------------------------
     
@@ -25,14 +29,16 @@ final class ImageCell: UITableViewCell {
     // MARK: -- Публичные методы ---------------------------------------------------------------
     
     // конфигуратор: принимает ссылку и формат изображения для запроса
-    func configure(with viewModel: ImageViewModel) {
-
+    func configure(with viewModel: CellModel) {
+        
+        guard let viewModel = viewModel as? ImageViewModel else { return }
+        
         // non-kf
         /*ComicsRepository.loadImage(imagePath: path,
-                                   imageExtension: ext,
-                                   completion: { downloadedImageData in
-                                        self.image.image = ImageExtractor.getImage(from: downloadedImageData)
-                                   })*/
+         imageExtension: ext,
+         completion: { downloadedImageData in
+         self.image.image = ImageExtractor.getImage(from: downloadedImageData)
+         })*/
         
         // kf
         ComicsRepository.loadImageKf(for: image,
@@ -58,7 +64,7 @@ final class ImageCell: UITableViewCell {
 }
 
 // Ячейка текстового значения
-final class TextCell: UITableViewCell {
+final class TextCell: UITableViewCell, ConfigurableCell {
     
     // MARK: -- Переменные и константы --------------------------------------------------------
     
@@ -85,7 +91,8 @@ final class TextCell: UITableViewCell {
     // MARK: -- Публичные методы ---------------------------------------------------------------
     
     // конфигуратор: принимает на вход текст и описание текстового поля
-    func configure(with viewModel: TextCellViewModel) {
+    func configure(with viewModel: CellModel) {
+        guard let viewModel = viewModel as? TextCellViewModel else { return }
         self.text.text = viewModel.text
         self.title.text = viewModel.title
     }

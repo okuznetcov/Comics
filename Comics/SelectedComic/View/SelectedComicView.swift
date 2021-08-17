@@ -16,35 +16,36 @@ protocol SelectedComicViewProtocol: AnyObject {
 // MARK: -- Вью-модели ячеек --------------------------------------------------------
 
 // Вью-модель текстовой ячейки (поле)
-struct TextCellViewModel {
+struct TextCellViewModel: CellModel {
+    var identifier: String = "SelectedComicViewTextCell"
     let text: String                            // сообщение
     let title: String                           // название изображения
 }
 
 // вью-модель ячейки изображения (обложки)
-struct ImageViewModel {
+struct ImageViewModel: CellModel {
+    var identifier: String = "SelectedComicViewImageCell"
     let imagePath: String                       // url  изображения
     let imageExt: String                        // формат изображения (необходимо для API-запроса)
 }
 
-final class SelectedComicView: UIViewController, SelectedComicViewProtocol {
 
+final class SelectedComicView: UIViewController, SelectedComicViewProtocol {
+    
     // MARK: -- Переменные и константы --------------------------------------------------------
-   
+    
     private var tableView = UITableView()
-    private var dataSource: SectionedTableViewDataSource?
+    private var dataSource: TableViewCustomDataSource?
     
     private var textCellViewModels: [TextCellViewModel] = [] {        // массив вью-моделей для текстовых ячеек
         didSet {
-            print(textCellViewModels.count)
-            renderTableViewImageCell(imageCellViewModels: imageCellViewModels, textCellViewModels: textCellViewModels)
+            renderTableView(imageCellViewModels: imageCellViewModels, textCellViewModels: textCellViewModels)
         }
     }
     
     private var imageCellViewModels: [ImageViewModel] = [] {        // массив вью-моделей для ячеек изображений (обложки)
         didSet {
-            print(imageCellViewModels.count)
-            renderTableViewImageCell(imageCellViewModels: imageCellViewModels, textCellViewModels: textCellViewModels)
+            renderTableView(imageCellViewModels: imageCellViewModels, textCellViewModels: textCellViewModels)
         }
     }
     
@@ -55,6 +56,7 @@ final class SelectedComicView: UIViewController, SelectedComicViewProtocol {
     override func viewDidLoad() {
         navigationItem.title = "Комикс"
         setupTableView()
+        presenter.didFinishedLoading()
     }
     
     // MARK: -- Публичные методы ---------------------------------------------------------------
@@ -79,26 +81,26 @@ final class SelectedComicView: UIViewController, SelectedComicViewProtocol {
     // настройка и установка констрейнов для таблицы
     private func setupTableView() {
         view.addSubview(tableView)
+        dataSource = .make(sections: [SectionModel(header: nil, models: textCellViewModels)])
+        tableView.dataSource = dataSource
         tableView.delegate = self
         tableView.rowHeight = UITableView.automaticDimension;
         tableView.estimatedRowHeight = 68
         tableView.separatorColor = .white
         tableView.allowsSelection = false
-        tableView.register(TextCell.self, forCellReuseIdentifier: "TextCell")
-        tableView.register(ImageCell.self, forCellReuseIdentifier: "ImageCell")
-        
+        tableView.register(TextCell.self, forCellReuseIdentifier: "SelectedComicViewTextCell")
+        tableView.register(ImageCell.self, forCellReuseIdentifier: "SelectedComicViewImageCell")
         tableView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
     }
     
-    private func renderTableViewImageCell(imageCellViewModels: [ImageViewModel], textCellViewModels: [TextCellViewModel]) {
+    private func renderTableView(imageCellViewModels: [ImageViewModel], textCellViewModels: [TextCellViewModel]) {
         
-        dataSource = SectionedTableViewDataSource(dataSources: [
-                TableViewCustomDataSource.make(for: imageCellViewModels, withCellIdentifier: "ImageCell"),
-                TableViewCustomDataSource.make(for: textCellViewModels, withCellIdentifier: "TextCell")])
-
-        tableView.dataSource = dataSource
+        let sections = [SectionModel(header: nil, models: imageCellViewModels),
+                        SectionModel(header: nil, models: textCellViewModels)]
+        
+        dataSource?.updateSections(sections: sections)
         tableView.reloadData()
     }
 }
@@ -107,6 +109,6 @@ final class SelectedComicView: UIViewController, SelectedComicViewProtocol {
 // MARK: -- Расширения ----------------------------------------------------------------
 
 extension SelectedComicView: UITableViewDelegate {
-
+    
 }
 

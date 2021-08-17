@@ -22,7 +22,7 @@ final class ComicsListPresenter: ComicsListPresenterProtocol {
     
     private let router: ComicsListRouterProtocol
     unowned let view: ComicsListViewProtocol
-   
+    
     // MARK: -- Инициализатор -----------------------------------------------------------------
     
     required init(view: ComicsListViewProtocol, router: ComicsListRouterProtocol) {
@@ -56,13 +56,13 @@ final class ComicsListPresenter: ComicsListPresenterProtocol {
             
             view.setNotFoundMessageVisibility(visible: true)            // показываем сообщение о 0 результатах
             
-        // если производим поиск и нашлись результаты
+            // если производим поиск и нашлись результаты
         } else if (view.isFilteringEnabled() && filteredComics.count != 0) {
             
             view.setNotFoundMessageVisibility(visible: false)           // скрываем сообщение о 0 результатах
             view.setComics(filteredComics)                              // заменяем комиксы во вью на отфильтрованные
-        
-        // если не производим поиск
+            
+            // если не производим поиск
         } else {
             
             view.setNotFoundMessageVisibility(visible: false)           // скрываем сообщение о 0 результатах
