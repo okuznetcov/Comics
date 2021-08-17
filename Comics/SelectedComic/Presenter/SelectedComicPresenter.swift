@@ -1,6 +1,7 @@
 import Foundation
 
 protocol SelectedComicPresenterProtocol {
+    func didFinishedLoading()                       // вью полностью загрузилось
 }
 
 final class SelectedComicPresenter: SelectedComicPresenterProtocol {
@@ -15,7 +16,9 @@ final class SelectedComicPresenter: SelectedComicPresenterProtocol {
     required init(view: SelectedComicViewProtocol, comic: Comic) {
         self.view = view
         self.comic = comic
-        
+    }
+    
+    func didFinishedLoading() {
         view.setImageCell(imagePath: comic.imagePath,
                           imageExt: comic.imageExt)
         

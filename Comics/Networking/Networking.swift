@@ -64,7 +64,6 @@ final class Networking {
             guard let url = URL(string: imageUrl) else { return nil }
             // если картинка это не заглушка
             if let data = try? Data(contentsOf: url) {               // грузим картинку из интернета
-                //print(imageUrl)
                 print("making web request for \(url)")
                 let comicImage = ComicImage(imageData: (UIImage(data: data)?.pngData()) ?? Data())   // создаем экземпляр класса, хранящий картинку и помещаем ее данные туда
                 self.imagesCache[imageUrl] = comicImage    // сохраняем полученный класс в кэш

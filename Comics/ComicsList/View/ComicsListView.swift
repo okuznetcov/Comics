@@ -12,7 +12,6 @@ protocol ComicsListViewProtocol: AnyObject {
 
 
 
-
 // MARK: -- Вью-модели ячеек --------------------------------------------------------
 
 // Вью-модель ячейки предупреждения (показывается на весь экран)
@@ -70,19 +69,19 @@ final class ComicsListView: UIViewController, ComicsListViewProtocol {
         }
     }
     
-    private var searchBarIsEmpty: Bool {                            // строка поиска пуста?
+    private var searchBarIsEmpty: Bool {                                // строка поиска пуста?
         guard let text = searchController.searchBar.text else { return false }
         return text.isEmpty
     }
     
-    private var isFiltering: Bool {                                 // пользователь производит поиск?
+    private var isFiltering: Bool {                                     // пользователь производит поиск?
         return searchController.isActive && !searchBarIsEmpty
     }
     
     private let searchController = UISearchController(searchResultsController: nil)
     private let comicsTableView = UITableView(frame: CGRect.init(), style: .grouped)
     private let notFoundMessage = ComicsListMessageViewModel(message: Messages.NotFound.message, imageName: Messages.NotFound.imageName)
-    private var comicsCellsDataSource: TableViewCustomDataSource<CellModel, CellModel>?
+    private var comicsCellsDataSource: TableViewCustomDataSource?
     
     var presenter: ComicsListPresenterProtocol!
     
@@ -140,6 +139,8 @@ final class ComicsListView: UIViewController, ComicsListViewProtocol {
     // настройка и установка констрейнов для таблицы
     private func setupTableView() {
         view.addSubview(comicsTableView)
+        comicsCellsDataSource = .make(sections: [SectionModel(header: nil, models: comicCellViewModels)])
+        comicsTableView.dataSource = comicsCellsDataSource
         comicsTableView.delegate = self
         comicsTableView.register(ComicsListViewCell.self, forCellReuseIdentifier: "ComicsListViewCell")
         comicsTableView.register(ComicsListViewMessageCell.self, forCellReuseIdentifier: "ComicsListViewMessageCell")
@@ -159,8 +160,7 @@ final class ComicsListView: UIViewController, ComicsListViewProtocol {
     
     // показ загруженных записей из массива вью-моделей
     private func renderTableViewComicsCells(_ viewModels: [ComicCellViewModel]) {
-        comicsCellsDataSource = .make(models: viewModels)
-        comicsTableView.dataSource = comicsCellsDataSource
+        comicsCellsDataSource?.updateModels(models: viewModels)
         comicsTableView.rowHeight = Consts.rowHeight
         comicsTableView.separatorColor = .separator
         comicsTableView.isScrollEnabled = true
@@ -169,8 +169,7 @@ final class ComicsListView: UIViewController, ComicsListViewProtocol {
     
     // показ сообщения на весь экран
     private func renderTableViewMessage(_ viewModel: ComicsListMessageViewModel) {
-        comicsCellsDataSource = .make(models: [viewModel])
-        comicsTableView.dataSource = comicsCellsDataSource
+        comicsCellsDataSource?.updateModels(models: [viewModel])
         comicsTableView.rowHeight = comicsTableView.visibleSize.height * 0.7
         comicsTableView.separatorColor = .clear
         comicsTableView.isScrollEnabled = false

@@ -35,19 +35,16 @@ final class SelectedComicView: UIViewController, SelectedComicViewProtocol {
     // MARK: -- Переменные и константы --------------------------------------------------------
     
     private var tableView = UITableView()
-    //private var dataSource: SectionedTableViewDataSource?
-    private var dataSource: TableViewCustomDataSource<CellModel, CellModel>?
+    private var dataSource: TableViewCustomDataSource?
     
     private var textCellViewModels: [TextCellViewModel] = [] {        // массив вью-моделей для текстовых ячеек
         didSet {
-            print(textCellViewModels.count)
             renderTableView(imageCellViewModels: imageCellViewModels, textCellViewModels: textCellViewModels)
         }
     }
     
     private var imageCellViewModels: [ImageViewModel] = [] {        // массив вью-моделей для ячеек изображений (обложки)
         didSet {
-            print(imageCellViewModels.count)
             renderTableView(imageCellViewModels: imageCellViewModels, textCellViewModels: textCellViewModels)
         }
     }
@@ -59,6 +56,7 @@ final class SelectedComicView: UIViewController, SelectedComicViewProtocol {
     override func viewDidLoad() {
         navigationItem.title = "Комикс"
         setupTableView()
+        presenter.didFinishedLoading()
     }
     
     // MARK: -- Публичные методы ---------------------------------------------------------------
@@ -83,6 +81,8 @@ final class SelectedComicView: UIViewController, SelectedComicViewProtocol {
     // настройка и установка констрейнов для таблицы
     private func setupTableView() {
         view.addSubview(tableView)
+        dataSource = .make(sections: [SectionModel(header: nil, models: textCellViewModels)])
+        tableView.dataSource = dataSource
         tableView.delegate = self
         tableView.rowHeight = UITableView.automaticDimension;
         tableView.estimatedRowHeight = 68
@@ -90,8 +90,6 @@ final class SelectedComicView: UIViewController, SelectedComicViewProtocol {
         tableView.allowsSelection = false
         tableView.register(TextCell.self, forCellReuseIdentifier: "SelectedComicViewTextCell")
         tableView.register(ImageCell.self, forCellReuseIdentifier: "SelectedComicViewImageCell")
-        //tableView.register(ImageCell.self, forHeaderFooterViewReuseIdentifier: "SelectedComicViewImageCell")
-        
         tableView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
@@ -99,18 +97,10 @@ final class SelectedComicView: UIViewController, SelectedComicViewProtocol {
     
     private func renderTableView(imageCellViewModels: [ImageViewModel], textCellViewModels: [TextCellViewModel]) {
         
-        // реализация 1: ДЖЕНЕРИКИ: две секции без header'ов
-        //let sections = [Section<CellModel, CellModel>(header: nil, models: imageCellViewModels), Section(header: nil, models: textCellViewModels)]
+        let sections = [SectionModel(header: nil, models: imageCellViewModels),
+                        SectionModel(header: nil, models: textCellViewModels)]
         
-        // реализация 2: ДЖЕНЕРИКИ: одна секция с хэдером
-        //let sections = [Section<CellModel, CellModel>(header: imageCellViewModels[0], models: textCellViewModels)]
-        //let cellIdentifiers = ["SelectedComicViewTextCell", "SelectedComicViewImageCell"]
-        
-        // реализация 3: Структура: две секции без header'ов`
-        let sections = [SectionModel(header: nil, models: imageCellViewModels), SectionModel(header: nil, models: textCellViewModels)]
-        
-        dataSource = .make(sections: sections)
-        tableView.dataSource = dataSource
+        dataSource?.updateSections(sections: sections)
         tableView.reloadData()
     }
 }
